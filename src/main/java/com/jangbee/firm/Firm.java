@@ -16,7 +16,7 @@ public class Firm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long accountId;
+    private String accountId;
     private String fname;
     private String equiListStr;
     private String address;

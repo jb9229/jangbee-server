@@ -27,13 +27,8 @@ public class FirmService {
         return this.repository.save(firm);
     }
 
-    public Firm getByAccountId(Long accountId) {
+    public Firm getByAccountId(String accountId) {
         Firm firm =   repository.findByAccountId(accountId);
-
-        if(firm == null)
-        {
-            throw new FirmNotFoundException(accountId);
-        }
 
 
         return firm;

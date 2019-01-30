@@ -38,7 +38,7 @@ public class FirmController {
     }
 
     @RequestMapping(value="firm/{accountId}", method = RequestMethod.GET)
-    public ResponseEntity get(@PathVariable Long accountId) {
+    public ResponseEntity get(@PathVariable String accountId) {
         Firm firm =   service.getByAccountId(accountId);
 
         FirmDto.Response response        =   modelMapper.map(firm, FirmDto.Response.class);
@@ -58,7 +58,7 @@ public class FirmController {
 
         if(account  ==  null)
         {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         Firm updateAccount     =   service.update(account, updateDto);
@@ -71,7 +71,7 @@ public class FirmController {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handlerSpoonNotFoundException(FirmNotFoundException e){
         ErrorResponse errorResponse  =   new ErrorResponse();
-        errorResponse.setMessage("["+ e.getId()+"]에 해당하는 업체가 없습니다.");
+        errorResponse.setMessage("["+ e.getAccountId()+"]에 해당하는 업체가 없습니다.");
         errorResponse.setCode("firm.not.found.exception");
 
         return errorResponse;

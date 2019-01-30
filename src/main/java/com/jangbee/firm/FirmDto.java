@@ -13,7 +13,7 @@ public class FirmDto {
     @Data
     public static class Response {
         private Long id;
-        private Long accountId;
+        private String accountId;
         private String fname;
         private String equiListStr;
         private String address;
@@ -34,7 +34,7 @@ public class FirmDto {
     @Data
     public static class Create{
         @NotNull
-        private Long accountId;
+        private String accountId;
         @NotBlank
         @Size(max=45)
         private String fname;
@@ -98,7 +98,7 @@ public class FirmDto {
         private Long id;
 
         @NotNull
-        private Long accountId;
+        private String accountId;
         @NotBlank
         @Size(max=45)
         private String fname;

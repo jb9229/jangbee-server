@@ -4,15 +4,15 @@ package com.jangbee.firm;
  * Created by test on 2019-01-24.
  */
 public class FirmNotFoundException  extends RuntimeException {
-    Long id;
+    String accountId;
 
-    public FirmNotFoundException(Long id){
-        this.id     =   id;
+    public FirmNotFoundException(String accountId){
+        this.accountId     =   accountId;
     }
 
 
-    public Long getId() {
-        return id;
+    public String getAccountId() {
+        return accountId;
     }
 
 }
