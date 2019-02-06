@@ -41,6 +41,11 @@ public class FirmController {
     public ResponseEntity get(@PathVariable String accountId) {
         Firm firm =   service.getByAccountId(accountId);
 
+        if(firm  ==  null)
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
         FirmDto.Response response        =   modelMapper.map(firm, FirmDto.Response.class);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -54,14 +59,14 @@ public class FirmController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Firm account     =   service.getByAccountId(updateDto.getAccountId());
+        Firm firm     =   service.getByAccountId(updateDto.getAccountId());
 
-        if(account  ==  null)
+        if(firm  ==  null)
         {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        Firm updateAccount     =   service.update(account, updateDto);
+        Firm updateAccount     =   service.update(firm, updateDto);
 
         return new ResponseEntity<>(modelMapper.map(updateAccount, FirmDto.Response.class),
                 HttpStatus.OK);

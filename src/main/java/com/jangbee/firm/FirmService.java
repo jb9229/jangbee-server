@@ -21,7 +21,11 @@ public class FirmService {
     private FirmRepository repository;
 
     public Firm create(FirmDto.Create create) {
+        // i don't know why Numberformatexception occure
+        String accountId = create.getAccountId();
+        create.setAccountId("");
         Firm firm = this.modelMapper.map(create, Firm.class);
+        firm.setAccountId(accountId);
 
 
         return this.repository.save(firm);
