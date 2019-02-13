@@ -2,6 +2,9 @@ package com.jangbee.firm;
 
 import com.jangbee.common.ErrorResponse;
 import com.jangbee.estimate.EstimateDto;
+import com.jangbee.local.EquiLocalDto;
+import com.jangbee.local.EquiLocalService;
+import org.assertj.core.util.Lists;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +13,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by test on 2019-01-20.
@@ -20,6 +25,7 @@ public class FirmController {
 
     @Autowired
     private FirmService service;
+    @Autowired private EquiLocalService equiLocalService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -48,6 +54,17 @@ public class FirmController {
 
         FirmDto.Response response        =   modelMapper.map(firm, FirmDto.Response.class);
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="firm/local/{equipment}", method = RequestMethod.GET)
+    public ResponseEntity getEquiLocalData(@PathVariable String equipment) {
+        Map<String, List> localData =   equiLocalService.getEquiLocalList(equipment);
+
+        EquiLocalDto.Response response = new EquiLocalDto.Response();
+
+        response.setSidoList(Lists.newArrayList(localData.keySet().iterator()));
+        response.setGunguData(localData);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -1,10 +1,14 @@
 package com.jangbee.firm;
 
+import com.jangbee.local.EquiLocalService;
+import com.jangbee.local.EquipmentLocal;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Created by test on 2019-01-20.
@@ -13,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Slf4j
 public class FirmService {
+    static String EQUIPMENT_STR_SEPERATOR = ",";
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired private EquiLocalService equiLocalService;
 
 
     @Autowired
@@ -26,6 +32,17 @@ public class FirmService {
         create.setAccountId("");
         Firm firm = this.modelMapper.map(create, Firm.class);
         firm.setAccountId(accountId);
+
+        // Save Equipment Local for search
+        String[] equipmentArr = firm.getEquiListStr().split(EQUIPMENT_STR_SEPERATOR);
+        String sido = firm.getSidoAddr();
+        String sigungu = firm.getSigunguAddr();
+        for(String equipment: equipmentArr){
+            if(equipment.isEmpty()){continue;}
+            EquipmentLocal eLocal = equiLocalService.get(equipment, sido, sigungu);
+
+            if(eLocal == null){equiLocalService.create(equipment, sido, sigungu);}
+        }
 
 
         return this.repository.save(firm);
