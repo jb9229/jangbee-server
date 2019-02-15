@@ -2,9 +2,13 @@ package com.jangbee.firm;
 
 import com.jangbee.local.EquiLocalService;
 import com.jangbee.local.EquipmentLocal;
+import com.jangbee.utils.GeoUtils;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.ParseException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.vividsolutions.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,12 +30,15 @@ public class FirmService {
     @Autowired
     private FirmRepository repository;
 
-    public Firm create(FirmDto.Create create) {
+    public Firm create(FirmDto.Create create) throws ParseException {
         // i don't know why Numberformatexception occure
         String accountId = create.getAccountId();
         create.setAccountId("");
         Firm firm = this.modelMapper.map(create, Firm.class);
         firm.setAccountId(accountId);
+
+        Geometry geometry = GeoUtils.wktToGeometry(String.format("POINT (%s %s)", create.getAddrLatitude(), create.getAddrLongitude()));
+        firm.setLocation((Point) geometry);
 
         // Save Equipment Local for search
         String[] equipmentArr = firm.getEquiListStr().split(EQUIPMENT_STR_SEPERATOR);
@@ -55,15 +62,13 @@ public class FirmService {
         return firm;
     }
 
-    public Firm update(Firm firm, FirmDto.Update update) {
+    public Firm update(Firm firm, FirmDto.Update update) throws ParseException {
         firm.setFname(update.getFname());
         firm.setEquiListStr(update.getEquiListStr());
         firm.setAddress(update.getAddress());
         firm.setAddressDetail(update.getAddressDetail());
         firm.setSidoAddr(update.getSidoAddr());
         firm.setSigunguAddr(update.getSigunguAddr());
-        firm.setAddrLatitude(update.getAddrLatitude());
-        firm.setAddrLongitude(update.getAddrLongitude());
         firm.setIntroduction(update.getIntroduction());
         firm.setThumbnail(update.getThumbnail());
         firm.setPhoto1(update.getPhoto1());
@@ -72,6 +77,9 @@ public class FirmService {
         firm.setBlog(update.getBlog());
         firm.setHomepage(update.getHomepage());
         firm.setSns(update.getSns());
+
+        Geometry geometry = GeoUtils.wktToGeometry(String.format("POINT (%s %s)", update.getAddrLatitude(), update.getAddrLongitude()));
+        firm.setLocation((Point) geometry);
 
         return this.repository.save(firm);
     }

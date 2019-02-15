@@ -1,8 +1,8 @@
 package com.jangbee.firm;
 
+import com.vividsolutions.jts.geom.Point;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 

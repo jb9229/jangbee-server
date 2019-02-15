@@ -1,11 +1,8 @@
 package com.jangbee.firm;
 
 import lombok.Data;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Created by test on 2019-01-20.
@@ -23,6 +20,8 @@ public class Firm {
     private String addressDetail;
     private String sidoAddr;
     private String sigunguAddr;
+    @Column(name = "location", columnDefinition = "POINT")
+    private Point location;
     private Double addrLongitude;
     private Double addrLatitude;
     private String introduction;

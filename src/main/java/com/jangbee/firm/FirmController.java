@@ -4,6 +4,7 @@ import com.jangbee.common.ErrorResponse;
 import com.jangbee.estimate.EstimateDto;
 import com.jangbee.local.EquiLocalDto;
 import com.jangbee.local.EquiLocalService;
+import com.vividsolutions.jts.io.ParseException;
 import org.assertj.core.util.Lists;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class FirmController {
     private ModelMapper modelMapper;
 
     @RequestMapping(value="firm", method = RequestMethod.POST)
-    public ResponseEntity create(@RequestBody @Valid FirmDto.Create create, BindingResult result){   //RequestBody
+    public ResponseEntity create(@RequestBody @Valid FirmDto.Create create, BindingResult result) throws ParseException {   //RequestBody
 
         if(result.hasErrors()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -53,6 +54,8 @@ public class FirmController {
         }
 
         FirmDto.Response response        =   modelMapper.map(firm, FirmDto.Response.class);
+        response.setAddrLongitude(firm.getLocation().getX());
+        response.setAddrLatitude(firm.getLocation().getY());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -70,7 +73,7 @@ public class FirmController {
 
 
     @RequestMapping(value="firm", method = RequestMethod.PUT)
-    public ResponseEntity update(@RequestBody @Valid FirmDto.Update updateDto, BindingResult result) {
+    public ResponseEntity update(@RequestBody @Valid FirmDto.Update updateDto, BindingResult result) throws ParseException {
 
         if(result.hasErrors()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
