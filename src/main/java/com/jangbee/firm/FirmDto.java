@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.math.BigInteger;
 
 /**
  * Created by test on 2019-01-20.
@@ -27,6 +28,22 @@ public class FirmDto {
         private String photo1;
         private String photo2;
         private String photo3;
+        private String blog;
+        private String homepage;
+        private String sns;
+    }
+    @Data
+    public static class ListResponse {
+        private Long id;
+        private String accountId;
+        private String fname;
+        private String equiListStr;
+        private String address;
+        private String sidoAddr;
+        private String sigunguAddr;
+        private BigInteger distance;
+        private String introduction;
+        private String thumbnail;
         private String blog;
         private String homepage;
         private String sns;

@@ -4,10 +4,14 @@ import com.jangbee.common.ErrorResponse;
 import com.jangbee.estimate.EstimateDto;
 import com.jangbee.local.EquiLocalDto;
 import com.jangbee.local.EquiLocalService;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.ParseException;
 import org.assertj.core.util.Lists;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -58,6 +62,14 @@ public class FirmController {
         response.setAddrLatitude(firm.getLocation().getY());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/firm/near", method = RequestMethod.GET)
+    public ResponseEntity getFirmNear(@RequestParam  String equipment, @RequestParam Double longitude, @RequestParam Double latitude, Pageable pageable){
+
+        Page<Object> pageResult =      service.findFirmNear(equipment, longitude, latitude, pageable);
+
+        return new ResponseEntity<>(pageResult, HttpStatus.OK);
     }
 
     @RequestMapping(value="firm/local/{equipment}", method = RequestMethod.GET)

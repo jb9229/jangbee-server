@@ -6,7 +6,7 @@
 
     <groupId>com.jb</groupId>
     <artifactId>jangbee</artifactId>
-    <version>0.3.0-20190206</version>
+    <version>0.4.0-20190216</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.10.RELEASE</version>
+        <version>1.5.19.RELEASE</version>
     </parent>
 
     <dependencyManagement>
@@ -51,11 +51,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>com.vaadin</groupId>-->
-            <!--<artifactId>vaadin-spring-boot-starter</artifactId>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

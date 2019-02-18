@@ -9,6 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.vividsolutions.jts.geom.Point;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,8 +41,7 @@ public class FirmService {
         Firm firm = this.modelMapper.map(create, Firm.class);
         firm.setAccountId(accountId);
 
-        Geometry geometry = GeoUtils.wktToGeometry(String.format("POINT (%s %s)", create.getAddrLatitude(), create.getAddrLongitude()));
-        firm.setLocation((Point) geometry);
+        firm.setLocation(getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
 
         // Save Equipment Local for search
         String[] equipmentArr = firm.getEquiListStr().split(EQUIPMENT_STR_SEPERATOR);
@@ -77,10 +80,29 @@ public class FirmService {
         firm.setBlog(update.getBlog());
         firm.setHomepage(update.getHomepage());
         firm.setSns(update.getSns());
-
-        Geometry geometry = GeoUtils.wktToGeometry(String.format("POINT (%s %s)", update.getAddrLatitude(), update.getAddrLongitude()));
-        firm.setLocation((Point) geometry);
+        firm.setLocation(getPoint(update.getAddrLatitude(), update.getAddrLongitude()));
 
         return this.repository.save(firm);
+    }
+
+    public Point getPoint(Double latitude, Double longitude) {
+        Geometry geometry;
+        try {
+            geometry = GeoUtils.wktToGeometry(String.format("POINT (%s %s)", latitude, longitude));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return (Point)geometry;
+    }
+
+    public Page<Object> findFirmNear(String equipmenet, Double longitude, Double latitude, Pageable pageable) {
+        String likeEquipmentStr = "%"+equipmenet+"%";
+
+        List<Object> list = repository.getNearFirm(likeEquipmentStr, longitude, latitude, (pageable.getPageNumber()-1)*pageable.getPageSize(), pageable.getPageSize());
+
+        long totalCnt = repository.countByEquiListStrLike(likeEquipmentStr);
+
+        return new PageImpl(list, pageable, totalCnt);
     }
 }
