@@ -96,13 +96,21 @@ public class FirmService {
         return (Point)geometry;
     }
 
-    public Page<Object> findFirmNear(String equipmenet, Double longitude, Double latitude, Pageable pageable) {
-        String likeEquipmentStr = "%"+equipmenet+"%";
+    public Page<Object> findNearFirm(String equipment, Double longitude, Double latitude, Pageable pageable) {
+        String likeEquipmentStr = "%"+equipment+"%";
 
-        List<Object> list = repository.getNearFirm(likeEquipmentStr, longitude, latitude, (pageable.getPageNumber()-1)*pageable.getPageSize(), pageable.getPageSize());
+        List<FirmDto.ListResponse> list = repository.getNearFirm(likeEquipmentStr, longitude, latitude, (pageable.getPageNumber()-1)*pageable.getPageSize(), pageable.getPageSize());
 
         long totalCnt = repository.countByEquiListStrLike(likeEquipmentStr);
 
         return new PageImpl(list, pageable, totalCnt);
+    }
+
+    public Page<Firm> findLocalFirm(String equipment, String sidoAddr, String sigunguAddr, Pageable pageable) {
+        String likeEquipmentStr = "%"+equipment+"%";
+
+        Page<Firm> list = repository.findByEquiListStrLikeAndSidoAddrAndSigunguAddr(likeEquipmentStr, sidoAddr, sigunguAddr, pageable);
+
+        return list;
     }
 }

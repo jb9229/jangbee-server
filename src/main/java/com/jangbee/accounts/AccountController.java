@@ -126,7 +126,6 @@ public class AccountController {
         Specification<Account> spec     =   Specifications.where(AccountSpecs.emailEqual(account.getEmail()));//spec  =   spec.and()
 
 
-
         Page<Account> page              =      repository.findAll(spec, pageable);
 
 

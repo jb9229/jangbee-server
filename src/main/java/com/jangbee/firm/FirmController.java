@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by test on 2019-01-20.
@@ -65,9 +66,24 @@ public class FirmController {
     }
 
     @RequestMapping(value="/firm/near", method = RequestMethod.GET)
-    public ResponseEntity getFirmNear(@RequestParam  String equipment, @RequestParam Double longitude, @RequestParam Double latitude, Pageable pageable){
+    public ResponseEntity getNearFirm(@RequestParam  String equipment, @RequestParam Double longitude, @RequestParam Double latitude, Pageable pageable){
 
-        Page<Object> pageResult =      service.findFirmNear(equipment, longitude, latitude, pageable);
+        Page<Object> pageResult =      service.findNearFirm(equipment, longitude, latitude, pageable);
+
+        return new ResponseEntity<>(pageResult, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/firm/local", method = RequestMethod.GET)
+    public ResponseEntity getLoclFirm(@RequestParam  String equipment, @RequestParam String sido, @RequestParam String gungu, Pageable pageable){
+
+        Page<Firm> page =      service.findLocalFirm(equipment, sido, gungu, pageable);
+
+        List<FirmDto.ListResponse> content = page.getContent().parallelStream()
+                .map(newFirm -> modelMapper.map(newFirm, FirmDto.ListResponse.class))
+                .collect(Collectors.toList());
+
+
+        PageImpl<FirmDto.ListResponse> pageResult    =   new PageImpl<>(content, pageable, page.getTotalElements());
 
         return new ResponseEntity<>(pageResult, HttpStatus.OK);
     }

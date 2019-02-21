@@ -16,6 +16,7 @@ public class FirmDto {
         private Long id;
         private String accountId;
         private String fname;
+        private String phoneNumber;
         private String equiListStr;
         private String address;
         private String addressDetail;
@@ -34,19 +35,31 @@ public class FirmDto {
     }
     @Data
     public static class ListResponse {
-        private Long id;
+        public ListResponse() {
+        }
+        public ListResponse(String accountId, String fname, String phoneNumber, String equiListStr, String address, String introduction, String thumbnail, Long distance) {
+            this.accountId = accountId;
+            this.fname = fname;
+            this.phoneNumber = phoneNumber;
+            this.equiListStr = equiListStr;
+            this.address = address;
+            this.introduction = introduction;
+            this.thumbnail = thumbnail;
+            this.distance = distance;
+        }
         private String accountId;
         private String fname;
+        private String phoneNumber;
         private String equiListStr;
         private String address;
-        private String sidoAddr;
-        private String sigunguAddr;
-        private BigInteger distance;
+//        private String sidoAddr;
+//        private String sigunguAddr;
+        private Long distance;
         private String introduction;
         private String thumbnail;
-        private String blog;
-        private String homepage;
-        private String sns;
+//        private String blog;
+//        private String homepage;
+//        private String sns;
     }
     @Data
     public static class Create{
@@ -55,6 +68,10 @@ public class FirmDto {
         @NotBlank
         @Size(max=45)
         private String fname;
+
+        @NotBlank
+        @Size(max=45)
+        private String phoneNumber;
 
         @NotBlank
         @Size(max=200)
@@ -119,6 +136,10 @@ public class FirmDto {
         @NotBlank
         @Size(max=45)
         private String fname;
+
+        @NotBlank
+        @Size(max=45)
+        private String phoneNumber;
 
         @NotBlank
         @Size(max=200)
