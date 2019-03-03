@@ -12,8 +12,8 @@ import java.util.List;
 public class AdService {
     @Autowired AdRepository repository;
 
-    public List<Ad> getByAdType(AdType adType) {
-        List<Ad> adList = repository.getByAdType(adType);
+    public List<Ad> getByAdType(AdType adType, String equiTarget, String sidoTarget, String gugunTarget) {
+        List<Ad> adList = repository.getByAdTypeAndEquiTargetAndSidoTargetAndGugunTarget(adType, equiTarget, sidoTarget, gugunTarget);
 
         return adList;
     }

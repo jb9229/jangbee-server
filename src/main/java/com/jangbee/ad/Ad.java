@@ -15,6 +15,9 @@ public class Ad {
     private Long id;
     @Enumerated(EnumType.ORDINAL)
     private AdType adType;
+    private String equiTarget;
+    private String sidoTarget;
+    private String gugunTarget;
     private Long firmId;
     private String photoUrl;
     private String title;

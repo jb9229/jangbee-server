@@ -8,5 +8,5 @@ import java.util.List;
  * Created by test on 2019-02-14.
  */
 public interface AdRepository extends JpaRepository<Ad, Long> {
-    List<Ad> getByAdType(AdType adType);
+    List<Ad> getByAdTypeAndEquiTargetAndSidoTargetAndGugunTarget(AdType adType, String equiTarget, String sidoTarget, String gugunTarget);
 }

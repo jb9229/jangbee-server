@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +25,9 @@ public class AdController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @RequestMapping(value="ad/{adType}", method = RequestMethod.GET)
-    public ResponseEntity get(@PathVariable AdType adType) {
-        List<Ad> adList =   service.getByAdType(adType);
+    @RequestMapping(value="ad", method = RequestMethod.GET)
+    public ResponseEntity get(@RequestParam AdType adType, @RequestParam(required = false) String equiTarget, @RequestParam(required = false) String sidoTarget, @RequestParam(required = false) String gugunTarget) {
+        List<Ad> adList =   service.getByAdType(adType, equiTarget, sidoTarget, gugunTarget);
 
         if(adList  ==  null)
         {
