@@ -1,12 +1,11 @@
 package com.jangbee.firm;
 
+import com.google.common.collect.Lists;
 import com.jangbee.common.ErrorResponse;
 import com.jangbee.estimate.EstimateDto;
 import com.jangbee.local.EquiLocalDto;
 import com.jangbee.local.EquiLocalService;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.io.ParseException;
-import org.assertj.core.util.Lists;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

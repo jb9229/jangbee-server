@@ -8,6 +8,12 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
 
 public class AccountDto {
+    @Data
+    public static class FirebaseUser {
+        Integer userType;
+        String expoPushToken;
+
+    }
 
     @Data
     public static class Create {

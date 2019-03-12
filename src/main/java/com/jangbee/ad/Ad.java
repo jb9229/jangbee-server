@@ -3,6 +3,7 @@ package com.jangbee.ad;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by test on 2019-02-14.
@@ -15,14 +16,25 @@ public class Ad {
     private Long id;
     @Enumerated(EnumType.ORDINAL)
     private AdType adType;
+    private Byte adOrder;
+    private String accountId;
     private String equiTarget;
     private String sidoTarget;
     private String gugunTarget;
-    private Long firmId;
     private String photoUrl;
     private String title;
     private String subTitle;
     private String telNumber;
+    private String obAccToken;
+    private String obRefreshToken;
+    private String fintechUseNum;
+    private Integer adPrice;
+    @Temporal(TemporalType.DATE)
+    private Date obAcctokenExpdate;
+    @Temporal(TemporalType.DATE)
+    private Date obAcctokenDiscdate;
+    @Temporal(TemporalType.DATE)
+    private Date nextWithdrawDate;
 }
 
 enum AdType {

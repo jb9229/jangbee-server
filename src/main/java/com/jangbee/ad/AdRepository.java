@@ -9,4 +9,6 @@ import java.util.List;
  */
 public interface AdRepository extends JpaRepository<Ad, Long> {
     List<Ad> getByAdTypeAndEquiTargetAndSidoTargetAndGugunTarget(AdType adType, String equiTarget, String sidoTarget, String gugunTarget);
+
+    List<Ad> getByAccountId(String accountId);
 }
