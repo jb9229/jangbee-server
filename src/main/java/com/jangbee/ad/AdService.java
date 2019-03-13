@@ -54,12 +54,12 @@ public class AdService {
     public Ad createAd(AdDto.Create create) {
         Ad newAd = this.modelMapper.map(create, Ad.class);
 
-        Calendar tokenExpDateCal = Calendar.getInstance();
-        tokenExpDateCal.add(Calendar.MONTH, 3);
-        newAd.setObAcctokenExpdate(tokenExpDateCal.getTime());
-
-        tokenExpDateCal.add(Calendar.MONTH, 9);
-        newAd.setObAcctokenDiscdate(tokenExpDateCal.getTime());
+//        Calendar tokenExpDateCal = Calendar.getInstance();
+//        tokenExpDateCal.add(Calendar.MONTH, 3);
+//        newAd.setObAcctokenExpdate(tokenExpDateCal.getTime());
+//
+//        tokenExpDateCal.add(Calendar.MONTH, 9);
+//        newAd.setObAcctokenDiscdate(tokenExpDateCal.getTime());
 
         return repository.save(newAd);
     }
@@ -98,7 +98,7 @@ public class AdService {
             JSONObject userJSON = new JSONObject();
             userJSON.put("client_id", obClientId);
             userJSON.put("client_secret", obClientSecret);
-            userJSON.put("refresh_token", ad.getObRefreshToken());
+//            userJSON.put("refresh_token", ad.getObRefreshToken());
             userJSON.put("scope", "login inquiry transfer");
             userJSON.put("grant_type", "refresh_token");
 
@@ -106,12 +106,12 @@ public class AdService {
             if (withdrawResult.getStatusCodeValue() == 200) {
                 AdDto.RefreshTokenResponse tranResult = withdrawResult.getBody();
 
-                ad.setObAccToken(tranResult.getAccess_token());
-                ad.setObRefreshToken(tranResult.getRefresh_token());
+//                ad.setObAccToken(tranResult.getAccess_token());
+//                ad.setObRefreshToken(tranResult.getRefresh_token());
 
                 Calendar tokenExpDateCal = Calendar.getInstance();
                 tokenExpDateCal.add(Calendar.MONTH, 3);
-                ad.setObAcctokenExpdate(tokenExpDateCal.getTime());
+//                ad.setObAcctokenExpdate(tokenExpDateCal.getTime());
                 repository.saveAndFlush(ad);
                 return true;
             }

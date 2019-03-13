@@ -26,7 +26,7 @@ public class AdWithdrawSchedulerTest {
     static String FBDB_BASE_URL="https://jangbee-inpe21.firebaseio.com";
 
     @Autowired
-    AdWithdrawScheduler scheduler;
+    AdWithdrawScheduler_euckr scheduler;
 
     @Autowired
     AdService adservice;

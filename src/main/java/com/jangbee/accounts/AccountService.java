@@ -27,24 +27,6 @@ public class AccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
-    public Account createAccount(AccountDto.Create dto)
-    {
-        Account account = this.modelMapper.map(dto, Account.class);
-
-        String username = dto.getUsername();
-        if (this.repository.findByUsername(username) != null) {
-            throw new UserDuplicatedException(username);
-        }
-        account.setPassword(this.passwordEncoder.encode(account.getPassword()));
-
-        Date date = new Date();
-        account.setJoined(date);
-        account.setUpdated(date);
-
-        return this.repository.save(account);
-    }
-
     public Account getAccount(Long id)
     {
         Account account = (Account)this.repository.findOne(id);
@@ -61,57 +43,6 @@ public class AccountService {
             throw new AccountNotFoundException(email);
         }
         return account;
-    }
-
-    public Account updateAccount(Account account, AccountDto.Update updateDto)
-    {
-        account.setUsername(updateDto.getUsername());
-
-        return (Account)this.repository.save(account);
-    }
-
-    public Account updateRiceAccount(Account account, AccountDto.RiceUpdate updateDto)
-    {
-        account.setRiceTol(updateDto.getRiceTol());
-        account.setRiceMonth(updateDto.getRiceMonth());
-        account.setRiceYear(updateDto.getRiceYear());
-        account.setRiceTemp(updateDto.getRiceTemp());
-
-        return (Account)this.repository.save(account);
-    }
-
-    public void deleteAccount(Long id)
-    {
-        this.repository.delete(getAccount(id));
-    }
-
-    public int addRice(Account account, AccountDto.RiceUpdate riceUpdate, int rice)
-    {
-        riceUpdate.setRiceTol(account.getRiceTol() + rice);
-        riceUpdate.setRiceMonth(account.getRiceMonth() + rice);
-        riceUpdate.setRiceYear(account.getRiceYear() + rice);
-
-        riceUpdate.setRiceTemp(account.getRiceTemp() + rice);
-
-
-        int donationRice    =   0;
-        if (riceUpdate.getRiceTemp() > 100)
-        {
-            double donationRiceOri = riceUpdate.getRiceTemp() / 100;
-
-            donationRice = (int)donationRiceOri;
-
-            donationRice *= 100;
-
-
-
-            riceUpdate.setRiceTemp(account.getRiceTemp() - donationRice);
-        }
-        else
-        {
-            donationRice = 0;
-        }
-        return donationRice;
     }
 
     public String calRandomPW(int length)

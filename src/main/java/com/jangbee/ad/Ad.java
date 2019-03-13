@@ -25,14 +25,8 @@ public class Ad {
     private String title;
     private String subTitle;
     private String telNumber;
-    private String obAccToken;
-    private String obRefreshToken;
     private String fintechUseNum;
     private Integer adPrice;
-    @Temporal(TemporalType.DATE)
-    private Date obAcctokenExpdate;
-    @Temporal(TemporalType.DATE)
-    private Date obAcctokenDiscdate;
     @Temporal(TemporalType.DATE)
     private Date nextWithdrawDate;
 }

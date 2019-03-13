@@ -26,7 +26,7 @@ public class ExpoNotificationServiceTest {
         String token = "ExponentPushToken[7ClYvcCbF-fuDCUEnus-u9]";
         String title = "Spring Test";
         String body = "Is it sueccess?";
-        expoNotificationService.sendSingle(token, title, body);
+        expoNotificationService.sendSingle(token, title, body, ExpoNotiData.NOTI_OBAT_DISCARD);
     }
 
 }

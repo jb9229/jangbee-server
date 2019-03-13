@@ -24,12 +24,17 @@ public class ExpoNotificationService {
     @Value( "${expo.push.endpoint}" )
     private String expoPushEndpoint;
 
-    public ResponseEntity sendSingle(String token, String title, String body){
+    public ResponseEntity sendSingle(String token, String title, String body, String notiType){
         JSONObject pushJSON = new JSONObject();
+        JSONObject data = new JSONObject();
+
+        if(notiType != null) { data.put("notice", notiType); }
+
         try {
             pushJSON.put("to", token);
             pushJSON.put("title", title);
             pushJSON.put("body", body);
+            pushJSON.put("data", data.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }

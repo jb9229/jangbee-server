@@ -2,7 +2,6 @@ package com.jangbee.firm;
 
 import com.google.common.collect.Lists;
 import com.jangbee.common.ErrorResponse;
-import com.jangbee.estimate.EstimateDto;
 import com.jangbee.local.EquiLocalDto;
 import com.jangbee.local.EquiLocalService;
 import com.vividsolutions.jts.io.ParseException;
@@ -45,7 +44,7 @@ public class FirmController {
         Firm firm = service.create(create);
 
 
-        return new ResponseEntity<>(modelMapper.map(firm, EstimateDto.Response.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(firm, FirmDto.Response.class), HttpStatus.OK);
     }
 
     @RequestMapping(value="firm/{accountId}", method = RequestMethod.GET)
