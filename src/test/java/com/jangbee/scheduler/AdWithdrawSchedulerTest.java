@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.jangbee.ad.AdRepository;
 import com.jangbee.ad.AdService;
+import com.jangbee.ad.AdWithdrawScheduler_euckr;
 import com.jangbee.expo.ExpoNotificationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +15,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by test on 2019-03-13.

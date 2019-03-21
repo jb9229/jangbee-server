@@ -1,7 +1,7 @@
 package com.jangbee.firm;
 
 import com.google.common.collect.Lists;
-import com.jangbee.common.ErrorResponse;
+import com.jangbee.common.JBErrorResponse;
 import com.jangbee.local.EquiLocalDto;
 import com.jangbee.local.EquiLocalService;
 import com.vividsolutions.jts.io.ParseException;
@@ -120,11 +120,11 @@ public class FirmController {
 
     @ExceptionHandler(FirmNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handlerSpoonNotFoundException(FirmNotFoundException e){
-        ErrorResponse errorResponse  =   new ErrorResponse();
-        errorResponse.setMessage("["+ e.getAccountId()+"]에 해당하는 업체가 없습니다.");
-        errorResponse.setCode("firm.not.found.exception");
+    public JBErrorResponse handlerSpoonNotFoundException(FirmNotFoundException e){
+        JBErrorResponse JBErrorResponse =   new JBErrorResponse();
+        JBErrorResponse.setGuide("["+ e.getAccountId()+"]에 해당하는 업체가 없습니다.");
+        JBErrorResponse.setTitle("firm.not.found.exception");
 
-        return errorResponse;
+        return JBErrorResponse;
     }
 }

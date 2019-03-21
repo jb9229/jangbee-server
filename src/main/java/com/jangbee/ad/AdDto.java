@@ -1,10 +1,13 @@
 package com.jangbee.ad;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 /**
  * Created by test on 2019-02-14.
@@ -17,15 +20,19 @@ public class AdDto {
         private String title;
         private String subTitle;
         private String telNumber;
+        @JsonFormat(pattern="yyyy-MM-dd")
+        private Date endDate;
     }
 
     @Data
     public static class Create {
         @NotNull
-        private AdType adType;
-        private short adOrder;
+        private short adType;
         @NotBlank
         private String accountId;
+        private String equiTarget;
+        private String sidoTarget;
+        private String gugunTarget;
         @NotBlank
         @Size(max = 10)
         private String title;
@@ -33,14 +40,13 @@ public class AdDto {
         @Size(max = 20)
         private String subTitle;
         private String photoUrl;
-        @NotNull
-        private Integer price;
-        @NotNull
-        private String accessToken;
-        @NotNull
-        private String obRefreshToken;
+        private String telNumber;
         @NotNull
         private String fintechUseNum;
+        @NotNull
+        private Integer price;
+        @Min(1)
+        private int forMonths;
     }
 
     @Data

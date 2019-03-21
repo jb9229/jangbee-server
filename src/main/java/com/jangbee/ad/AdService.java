@@ -1,7 +1,5 @@
 package com.jangbee.ad;
 
-import com.jangbee.firm.Firm;
-import com.jangbee.firm.FirmService;
 import com.jangbee.utils.RestTemplateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,10 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,8 +35,8 @@ public class AdService {
     @Value( "${openbank.client.secret}" )
     private String obClientSecret;
 
-    public List<Ad> getByAdType(AdType adType, String equiTarget, String sidoTarget, String gugunTarget) {
-        List<Ad> adList = repository.getByAdTypeAndEquiTargetAndSidoTargetAndGugunTarget(adType, equiTarget, sidoTarget, gugunTarget);
+    public List<Ad> getByAdLocation(AdLocation adLocation, String equiTarget, String sidoTarget, String gugunTarget) {
+        List<Ad> adList = repository.getByAdLocationAndEquiTargetAndSidoTargetAndGugunTarget(adLocation, equiTarget, sidoTarget, gugunTarget);
 
         return adList;
     }
@@ -52,16 +48,38 @@ public class AdService {
     }
 
     public Ad createAd(AdDto.Create create) {
+        // i don't know why Numberformatexception occure
+        String accountId = create.getAccountId();
+        create.setAccountId("");
         Ad newAd = this.modelMapper.map(create, Ad.class);
+        newAd.setAccountId(accountId);
 
-//        Calendar tokenExpDateCal = Calendar.getInstance();
-//        tokenExpDateCal.add(Calendar.MONTH, 3);
-//        newAd.setObAcctokenExpdate(tokenExpDateCal.getTime());
-//
-//        tokenExpDateCal.add(Calendar.MONTH, 9);
-//        newAd.setObAcctokenDiscdate(tokenExpDateCal.getTime());
+        newAd.setAdLocation(calAdLocation(create.getAdType()));
+        Calendar nowCal = Calendar.getInstance();
+        newAd.setStartDate(nowCal.getTime());
+
+        nowCal.add(Calendar.MONTH, create.getForMonths());
+        newAd.setEndDate(nowCal.getTime());
+
+        if(create.getForMonths() > 1){
+            Calendar nextWithdrawCal = Calendar.getInstance();
+            nextWithdrawCal.add(Calendar.MONTH, 1);
+            newAd.setNextWithdrawDate(nextWithdrawCal.getTime());
+        }
 
         return repository.save(newAd);
+    }
+
+    private AdLocation calAdLocation(short adType) {
+        if(adType < 11){
+            return AdLocation.MAIN;
+        }else if(adType < 21){
+            return AdLocation.EQUIPMENT;
+        }else if(adType < 31){
+            return AdLocation.LOCAL;
+        }
+
+        return AdLocation.SEARCH;
     }
 
     public boolean obTransferWithdraw(String fintechUseNum, int price) {
@@ -121,5 +139,29 @@ public class AdService {
         }
 
         return false;
+    }
+
+    public List<Integer> getBookedAdType() {
+        return repository.getBookedAdType();
+    }
+
+    /**
+     * 장비 타켓광고 중복확인 함수
+     * @param equipment
+     * @return
+     */
+    public Ad getByEquiTarget(String equipment) {
+        return repository.getByEquiTargetAndAdType(equipment, Ad.ADTYPE_EQUIPMENT_FIRST);
+    }
+
+    /**
+     * 지역 타켓광고 중복 확인함수
+     * @param equipment
+     * @param sido
+     * @param gungu
+     * @return
+     */
+    public Ad getByLocalTarget(String equipment, String sido, String gungu) {
+        return repository.getByEquiTargetAndSidoTargetAndGugunTargetAndAdType(equipment, sido, gungu, Ad.ADTYPE_LOCAL_FIRST);
     }
 }

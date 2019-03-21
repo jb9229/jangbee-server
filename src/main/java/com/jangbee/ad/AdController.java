@@ -1,5 +1,6 @@
 package com.jangbee.ad;
 
+import com.jangbee.common.JBBadRequestException;
 import org.json.JSONException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +31,20 @@ public class AdController {
     @RequestMapping(value="ad", method = RequestMethod.POST)
     public ResponseEntity create(@RequestBody @Valid AdDto.Create create, BindingResult result) throws JSONException {
         if(result.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new JBBadRequestException(result.toString());
         }
 
         //TODO 첫달 이체 진행
-        boolean withDrawResult = service.obTransferWithdraw(create.getFintechUseNum(), create.getPrice());
+//        if(!service.obTransferWithdraw(create.getFintechUseNum(), create.getPrice())){throw new AdPriceWithdrawException();}
 
-        if(withDrawResult) {
-            Ad newAd  =   service.createAd(create);
+        Ad newAd  =   service.createAd(create);
 
-            return new ResponseEntity<>(modelMapper.map(newAd, AdDto.Response.class), HttpStatus.CREATED);
-        }else{
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(modelMapper.map(newAd, AdDto.Response.class), HttpStatus.CREATED);
     }
+
     @RequestMapping(value="ad", method = RequestMethod.GET)
-    public ResponseEntity get(@RequestParam AdType adType, @RequestParam(required = false) String equiTarget, @RequestParam(required = false) String sidoTarget, @RequestParam(required = false) String gugunTarget) {
-        List<Ad> adList =   service.getByAdType(adType, equiTarget, sidoTarget, gugunTarget);
+    public ResponseEntity get(@RequestParam AdLocation adLocation, @RequestParam(required = false) String equiTarget, @RequestParam(required = false) String sidoTarget, @RequestParam(required = false) String gugunTarget) {
+        List<Ad> adList =   service.getByAdLocation(adLocation, equiTarget, sidoTarget, gugunTarget);
 
         if(adList  ==  null)
         {
@@ -74,5 +72,48 @@ public class AdController {
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="ad/booked", method = RequestMethod.GET)
+    public ResponseEntity getBookedAdType() {
+        List<Integer> adTypeList =   service.getBookedAdType();
+
+        if(adTypeList  ==  null)
+        {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(adTypeList, HttpStatus.OK);
+    }
+
+    /**
+     * 장비 타켓 중복확인 함수
+     * @param equipment
+     * @return
+     */
+    @RequestMapping(value="ad/target/equipment", method = RequestMethod.GET)
+    public ResponseEntity existEquiTargetAd(@RequestParam String equipment) {
+        Ad equipTargetAd =   service.getByEquiTarget(equipment);
+
+        if(equipTargetAd == null){return new ResponseEntity<>(HttpStatus.NO_CONTENT);}
+
+        AdDto.Response responseAd = modelMapper.map(equipTargetAd , AdDto.Response.class);
+
+        return new ResponseEntity<>(responseAd, HttpStatus.OK);
+    }
+
+    /**
+     * 지역 타켓광고 중복확인 함수
+     * @param equipment
+     * @return
+     */
+    @RequestMapping(value="ad/target/local", method = RequestMethod.GET)
+    public ResponseEntity existLocalTargetAd(@RequestParam String equipment, @RequestParam String sido, @RequestParam String gungu) {
+        Ad localTargetAd =   service.getByLocalTarget(equipment, sido, gungu);
+
+        if(localTargetAd == null){return new ResponseEntity<>(HttpStatus.NO_CONTENT);}
+
+        AdDto.Response responseAd = modelMapper.map(localTargetAd , AdDto.Response.class);
+        return new ResponseEntity<>(responseAd, HttpStatus.OK);
     }
 }
