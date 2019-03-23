@@ -46,6 +46,26 @@ public class Ad {
     private Date nextWithdrawDate;
 }
 
+enum AdType {
+    MAIN_FIRST("메인광고_첫번째", 7),
+    MAIN_SECONDE("메인광고_두번째", 5),
+    MAIN_THIRD("메인광고_세번째", 5),
+    TARGET_EQUI_FIRST("장비 타켓광고_첫번째", 1),
+    TARGET_EQUI_SECONDE("장비 타켓광고_두번째", 2),
+    TARGET_EQUI_THIRD("장비 타켓광고_세번째", 3),
+    TARGET_LOCAL_FIRST("지역 타켓광고_첫번째", 1),
+    TARGET_LOCAL_SECONDE("지역 타켓광고_두번째", 2),
+    TARGET_LOCAL_THIRD("지역 타켓광고_세번째", 3);
+
+    private String description;
+    private int defaultPrice;
+
+    AdType(String description, int price){
+        this.description = description;
+        this.defaultPrice = price;
+    }
+}
+
 enum AdLocation {
     MAIN,
     EQUIPMENT,

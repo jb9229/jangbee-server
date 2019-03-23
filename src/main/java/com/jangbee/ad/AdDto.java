@@ -15,11 +15,18 @@ import java.util.Date;
 public class AdDto {
     @Data
     public static class Response {
+        private Long id;
+        private short adType;
         private String accountId;
         private String photoUrl;
         private String title;
         private String subTitle;
         private String telNumber;
+        private String equiTarget;
+        private String sidoTarget;
+        private String gugunTarget;
+        @JsonFormat(pattern="yyyy-MM-dd")
+        private Date startDate;
         @JsonFormat(pattern="yyyy-MM-dd")
         private Date endDate;
     }
@@ -47,6 +54,30 @@ public class AdDto {
         private Integer price;
         @Min(1)
         private int forMonths;
+    }
+
+    @Data
+    public static class Update {
+        @NotNull
+        private Long id;
+        @NotBlank
+        @Size(max = 10)
+        private String title;
+        @NotBlank
+        @Size(max = 20)
+        private String subTitle;
+        private String photoUrl;
+        private String telNumber;
+        @Min(1)
+        private int forMonths;
+        // The following will be added later
+//        private String equiTarget;
+//        private String sidoTarget;
+//        private String gugunTarget;
+//        @NotNull
+//        private String fintechUseNum;
+//        @NotNull
+//        private Integer price;
     }
 
     @Data

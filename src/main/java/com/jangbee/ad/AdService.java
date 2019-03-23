@@ -164,4 +164,26 @@ public class AdService {
     public Ad getByLocalTarget(String equipment, String sido, String gungu) {
         return repository.getByEquiTargetAndSidoTargetAndGugunTargetAndAdType(equipment, sido, gungu, Ad.ADTYPE_LOCAL_FIRST);
     }
+
+    public Ad updateAd(AdDto.Update update) {
+        Ad ad = repository.getOne(update.getId());
+
+        if (ad == null) {
+            throw new AdNotFoundException();
+        }
+
+        ad.setTitle(update.getTitle());
+        ad.setSubTitle(update.getSubTitle());
+        ad.setPhotoUrl(update.getPhotoUrl());
+        ad.setTelNumber(update.getTelNumber());
+        if (update.getForMonths() > 0) {
+            Calendar endDateCal = Calendar.getInstance();
+            endDateCal.setTime(ad.getEndDate());
+
+            endDateCal.set(Calendar.MONTH, update.getForMonths());
+            ad.setEndDate(endDateCal.getTime());
+        }
+
+        return repository.saveAndFlush(ad);
+    }
 }

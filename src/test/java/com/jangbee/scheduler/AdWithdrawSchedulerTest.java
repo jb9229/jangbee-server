@@ -5,7 +5,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.jangbee.ad.AdRepository;
 import com.jangbee.ad.AdService;
-import com.jangbee.ad.AdWithdrawScheduler_euckr;
+import com.jangbee.ad.AdWithdrawScheduler;
 import com.jangbee.expo.ExpoNotificationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +25,7 @@ public class AdWithdrawSchedulerTest {
     static String FBDB_BASE_URL="https://jangbee-inpe21.firebaseio.com";
 
     @Autowired
-    AdWithdrawScheduler_euckr scheduler;
+    AdWithdrawScheduler scheduler;
 
     @Autowired
     AdService adservice;
