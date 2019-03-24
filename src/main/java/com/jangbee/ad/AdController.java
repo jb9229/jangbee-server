@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,6 +126,25 @@ public class AdController {
         }
 
         Ad newAd  =   service.updateAd(update);
+
+        return new ResponseEntity<>(modelMapper.map(newAd, AdDto.Response.class), HttpStatus.OK);
+    }
+
+    @RequestMapping(value="ad/fintechusenum", method = RequestMethod.PUT)
+    public ResponseEntity updateFintechUseNum(@RequestParam String accountId, @RequestParam String newFintechUseNum) throws JSONException {
+        boolean result  =   service.updateAdFintechUseNum(newFintechUseNum, accountId);
+
+        if(result)
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        else
+            return new ResponseEntity<>(HttpStatus.PRECONDITION_FAILED);
+    }
+
+    @RequestMapping(value="ad", method = RequestMethod.DELETE)
+    public ResponseEntity terminate(@RequestParam Long id) throws JSONException {
+
+
+        Ad newAd  =   service.terminateAd(id);
 
         return new ResponseEntity<>(modelMapper.map(newAd, AdDto.Response.class), HttpStatus.OK);
     }

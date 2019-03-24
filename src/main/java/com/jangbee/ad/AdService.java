@@ -186,4 +186,24 @@ public class AdService {
 
         return repository.saveAndFlush(ad);
     }
+
+    public Ad terminateAd(Long id) {
+        Ad ad = repository.getOne(id);
+
+        if (ad == null) {
+            throw new AdNotFoundException();
+        }
+
+        ad.setEndDate(ad.getNextWithdrawDate());
+
+        return repository.saveAndFlush(ad);
+    }
+
+    public boolean updateAdFintechUseNum(String newFintechUseNum, String accountId) {
+        Integer result = repository.updateFintechUseNum(newFintechUseNum, accountId);
+
+        if(result == null || result > 1 ){return false;}
+
+        return true;
+    }
 }
