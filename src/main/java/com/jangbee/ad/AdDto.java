@@ -41,7 +41,7 @@ public class AdDto {
         private String sidoTarget;
         private String gugunTarget;
         @NotBlank
-        @Size(max = 10)
+        @Size(max = 15)
         private String title;
         @NotBlank
         @Size(max = 20)
@@ -61,14 +61,14 @@ public class AdDto {
         @NotNull
         private Long id;
         @NotBlank
-        @Size(max = 10)
+        @Size(max = 15)
         private String title;
         @NotBlank
         @Size(max = 20)
         private String subTitle;
         private String photoUrl;
         private String telNumber;
-        @Min(1)
+        @Min(0)
         private int forMonths;
         // The following will be added later
 //        private String equiTarget;

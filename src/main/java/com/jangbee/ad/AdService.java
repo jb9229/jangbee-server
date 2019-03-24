@@ -180,7 +180,7 @@ public class AdService {
             Calendar endDateCal = Calendar.getInstance();
             endDateCal.setTime(ad.getEndDate());
 
-            endDateCal.set(Calendar.MONTH, update.getForMonths());
+            endDateCal.add(Calendar.MONTH, update.getForMonths());
             ad.setEndDate(endDateCal.getTime());
         }
 

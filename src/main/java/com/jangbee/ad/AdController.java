@@ -31,7 +31,7 @@ public class AdController {
     @RequestMapping(value="ad", method = RequestMethod.POST)
     public ResponseEntity create(@RequestBody @Valid AdDto.Create create, BindingResult result) throws JSONException {
         if(result.hasErrors()){
-            throw new JBBadRequestException(result.toString());
+            throw new JBBadRequestException();
         }
 
         //TODO 첫달 이체 진행
@@ -119,9 +119,9 @@ public class AdController {
 
 
     @RequestMapping(value="ad", method = RequestMethod.PUT)
-    public ResponseEntity create(@RequestBody @Valid AdDto.Update update, BindingResult result) throws JSONException {
+    public ResponseEntity update(@RequestBody @Valid AdDto.Update update, BindingResult result) throws JSONException {
         if(result.hasErrors()){
-            throw new JBBadRequestException(result.toString());
+            throw new JBBadRequestException();
         }
 
         Ad newAd  =   service.updateAd(update);
