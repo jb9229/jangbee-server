@@ -30,4 +30,8 @@ public class ClientEvaluService {
     public List<ClientEvalu> getClientEvaluAll() {
         return repository.findAll();
     }
+
+    public boolean existTelNumer(String telNumber) {
+        return repository.existsByTelNumber(telNumber);
+    }
 }

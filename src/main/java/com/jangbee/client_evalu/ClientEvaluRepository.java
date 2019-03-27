@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 
 public interface ClientEvaluRepository extends JpaRepository<ClientEvalu, Long> {
+    boolean existsByTelNumber(String telNumber);
 }

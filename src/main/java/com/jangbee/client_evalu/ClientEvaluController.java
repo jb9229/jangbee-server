@@ -1,6 +1,7 @@
 package com.jangbee.client_evalu;
 
 import com.jangbee.common.JBBadRequestException;
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import com.vividsolutions.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -33,7 +35,9 @@ public class ClientEvaluController {
             throw new JBBadRequestException();
         }
 
+
         ClientEvalu clientEvalu = service.create(create);
+
 
 
         return new ResponseEntity<>(modelMapper.map(clientEvalu, ClientEvaluDto.Response.class), HttpStatus.OK);
@@ -48,5 +52,12 @@ public class ClientEvaluController {
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="evaluation/exist/telnumber", method = RequestMethod.GET)
+    public ResponseEntity existTelNumber(@RequestParam String telNumber) {
+        boolean result =   service.existTelNumer(telNumber);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

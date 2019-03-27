@@ -67,8 +67,8 @@ public class AdWithdrawScheduler {
                     }
 
                     // 광고비 이체
-                    Calendar beforeTenDayCal = Calendar.getInstance();
-                    beforeTenDayCal.add(Calendar.DAY_OF_MONTH, 10);
+                    Calendar afterTenDayCal = Calendar.getInstance();
+                    afterTenDayCal.add(Calendar.DAY_OF_MONTH, 10);
                     if(ad.getNextWithdrawDate().before(ad.getEndDate()) && ad.getNextWithdrawDate().after(now)){
                         boolean result = adservice.obTransferWithdraw(ad.getFintechUseNum(), ad.getPrice());
 
@@ -91,14 +91,14 @@ public class AdWithdrawScheduler {
 
                             adRepository.saveAndFlush(ad);
                         }
-                    }else if(ad.getEndDate().after(beforeTenDayCal.getTime())){
+                    }else if(!now.after(ad.getEndDate()) && afterTenDayCal.getTime().after(ad.getEndDate())){
                         long calDate = ad.getEndDate().getTime() - now.getTime();
                         long calDateDays = calDate / ( 24*60*60*1000);
 
                         if( (8 < calDateDays && calDateDays <= 9) || (4 < calDateDays && calDateDays <= 5) || (2 < calDateDays && calDateDays <= 3) || (0 < calDateDays && calDateDays <= 1)){
                             expoNotificationService.sendSingle(user.getExpoPushToken(), "광고일 기간 만료", "곧 장비콜 광고가 만료 됩니다, 기간연장 가능 합니다(만료일 후 광고 삭제됨)", null);
                         }
-                    }else if(ad.getEndDate().after(now)){
+                    }else if(now.after(ad.getEndDate())){
                         adRepository.delete(ad);
                     }
                 }
