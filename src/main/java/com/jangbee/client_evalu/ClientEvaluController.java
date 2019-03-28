@@ -60,4 +60,23 @@ public class ClientEvaluController {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @RequestMapping(value="evaluation", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody @Valid ClientEvaluDto.Update update, BindingResult result) throws ParseException {   //RequestBody
+
+        if(result.hasErrors()){
+            throw new JBBadRequestException();
+        }
+
+        ClientEvalu updateClientEvalu = service.update(update);
+
+        return new ResponseEntity<>(modelMapper.map(updateClientEvalu, ClientEvaluDto.Response.class), HttpStatus.OK);
+    }
+
+    @RequestMapping(value="evaluation", method = RequestMethod.DELETE)
+    public ResponseEntity delete(@RequestParam Long id){   //RequestBody
+        service.delete(id);
+
+        return new ResponseEntity<>(modelMapper.map(true, ClientEvaluDto.Response.class), HttpStatus.OK);
+    }
 }

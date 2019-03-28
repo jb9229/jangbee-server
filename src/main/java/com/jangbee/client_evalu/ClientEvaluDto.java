@@ -36,4 +36,18 @@ public class ClientEvaluDto {
         @Size(max = 1000)
         private String reason;
     }
+
+    @Data
+    public static class Update {
+        @NotNull
+        private Long id;
+
+        @NotBlank
+        @Size(max = 45)
+        private String cliName;
+
+        @NotBlank
+        @Size(max = 1000)
+        private String reason;
+    }
 }

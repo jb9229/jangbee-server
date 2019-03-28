@@ -34,4 +34,21 @@ public class ClientEvaluService {
     public boolean existTelNumer(String telNumber) {
         return repository.existsByTelNumber(telNumber);
     }
+
+    public ClientEvalu update(ClientEvaluDto.Update update) {
+        ClientEvalu updateCE = repository.findOne(update.getId());
+
+        if (update == null){
+            throw new ClientEvaluNotFoundException();
+        }
+
+        updateCE.setCliName(update.getCliName());
+        updateCE.setReason(update.getReason());
+
+        return repository.saveAndFlush(updateCE);
+    }
+
+    public void delete(Long id) {
+        repository.delete(id);
+    }
 }
