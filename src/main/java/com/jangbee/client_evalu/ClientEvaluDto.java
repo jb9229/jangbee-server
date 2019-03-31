@@ -19,6 +19,7 @@ public class ClientEvaluDto {
         private String reason;
         private int likeCount;
         private int unlikeCount;
+        private boolean likedEvau;
     }
 
     @Data

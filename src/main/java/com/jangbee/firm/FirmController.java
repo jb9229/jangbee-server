@@ -47,8 +47,8 @@ public class FirmController {
         return new ResponseEntity<>(modelMapper.map(firm, FirmDto.Response.class), HttpStatus.OK);
     }
 
-    @RequestMapping(value="firm/{accountId}", method = RequestMethod.GET)
-    public ResponseEntity get(@PathVariable String accountId) {
+    @RequestMapping(value="firm", method = RequestMethod.GET)
+    public ResponseEntity get(@RequestParam String accountId) {
         Firm firm =   service.getByAccountId(accountId);
 
         if(firm  ==  null)

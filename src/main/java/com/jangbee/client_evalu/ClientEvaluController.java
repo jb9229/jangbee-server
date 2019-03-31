@@ -44,11 +44,20 @@ public class ClientEvaluController {
     }
 
     @RequestMapping(value="evaluations", method = RequestMethod.GET)
-    public ResponseEntity getAll() {
+    public ResponseEntity getAll(@RequestParam String accountId) {
         List<ClientEvalu> list =   service.getClientEvaluAll();
 
+        List<Long> evaluLikeList = service.listEvaluLike(accountId);
+
         List<ClientEvaluDto.Response> responseList = list.parallelStream()
-                .map(newEvalu -> modelMapper.map(newEvalu, ClientEvaluDto.Response.class))
+                .map(newEvalu -> {
+                    ClientEvaluDto.Response response = modelMapper.map(newEvalu, ClientEvaluDto.Response.class);
+                    if(evaluLikeList.contains(newEvalu.getId())){
+                        response.setLikedEvau(true);
+                    }
+
+                    return response;
+                })
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(responseList, HttpStatus.OK);
@@ -78,5 +87,46 @@ public class ClientEvaluController {
         service.delete(id);
 
         return new ResponseEntity<>(modelMapper.map(true, ClientEvaluDto.Response.class), HttpStatus.OK);
+    }
+
+    @RequestMapping(value="evaluation/like", method = RequestMethod.POST)
+    public ResponseEntity createlike(@RequestBody @Valid ClientEvaluLikeDto.Create create, BindingResult result) throws ParseException {
+        if(result.hasErrors()){
+            throw new JBBadRequestException();
+        }
+
+        ClientEvaluLike evaluLike = service.updateLike(create);
+
+
+        return new ResponseEntity<>(modelMapper.map(evaluLike, ClientEvaluLikeDto.Response.class), HttpStatus.OK);
+    }
+
+    @RequestMapping(value="evaluation/like/exist", method = RequestMethod.GET)
+    public ResponseEntity existLike(@RequestParam String accountId){
+
+        boolean result = service.existEvaluLike(accountId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="evaluation/like", method = RequestMethod.GET)
+    public ResponseEntity listLike(@RequestParam long evaluId) throws ParseException {
+
+        List<ClientEvaluLike> evaluLikeList = service.getEvaluLikeList(evaluId);
+
+        List<ClientEvaluLikeDto.Response> evaluLikeResList = evaluLikeList
+                .parallelStream()
+                .map((item) -> modelMapper.map(item, ClientEvaluLikeDto.Response.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(evaluLikeResList, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="evaluation/like", method = RequestMethod.DELETE)
+    public ResponseEntity cancelLike(@RequestParam long evaluId, @RequestParam String accountId, @RequestParam boolean like){
+
+        boolean result = service.cancelEvaluLike(evaluId, accountId, like);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
