@@ -3,9 +3,7 @@ package com.jangbee.firm;
 import lombok.Data;
 import javax.persistence.*;
 import javax.persistence.Entity;
-
 import com.vividsolutions.jts.geom.Point;
-import org.hibernate.annotations.*;
 
 /**
  * Created by test on 2019-01-20.

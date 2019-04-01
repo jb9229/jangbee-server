@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.vividsolutions.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,7 +87,7 @@ public class FirmService {
     public Point getPoint(Double latitude, Double longitude) {
         Geometry geometry;
         try {
-            geometry = GeoUtils.wktToGeometry(String.format("POINT (%s %s)", latitude, longitude));
+            geometry = GeoUtils.wktToGeometry(String.format("POINT (%f %f)", longitude, latitude));
         } catch (ParseException e) {
             e.printStackTrace();
             return null;
@@ -99,7 +98,7 @@ public class FirmService {
     public Page<Object> findNearFirm(String equipment, Double longitude, Double latitude, Pageable pageable) {
         String likeEquipmentStr = "%"+equipment+"%";
 
-        List<FirmDto.ListResponse> list = repository.getNearFirm(likeEquipmentStr, longitude, latitude, (pageable.getPageNumber()-1)*pageable.getPageSize(), pageable.getPageSize());
+        List<FirmDto.ListResponse> list = repository.getNearFirm(likeEquipmentStr, longitude, latitude, (pageable.getPageNumber())*pageable.getPageSize(), pageable.getPageSize());
 
         long totalCnt = repository.countByEquiListStrLike(likeEquipmentStr);
 
