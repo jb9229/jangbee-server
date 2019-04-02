@@ -39,8 +39,10 @@ public class Ad {
     private String photoUrl;
     private String telNumber;
     private String fintechUseNum;
-    private Integer price;
+    private int price;
+    @Temporal(TemporalType.DATE)
     private Date startDate;
+    @Temporal(TemporalType.DATE)
     private Date endDate;
     @Temporal(TemporalType.DATE)
     private Date nextWithdrawDate;

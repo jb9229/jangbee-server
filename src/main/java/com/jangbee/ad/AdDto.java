@@ -51,7 +51,7 @@ public class AdDto {
         @NotNull
         private String fintechUseNum;
         @NotNull
-        private Integer price;
+        private int price;
         @Min(1)
         private int forMonths;
     }
