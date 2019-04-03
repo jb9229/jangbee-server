@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Point;
                 )
         }
 )
-@org.hibernate.annotations.NamedNativeQuery(name="Firm.getNearFirm", query = "SELECT account_id, fname, phone_number, thumbnail, introduction, address, equi_list_str, ST_DISTANCE_SPHERE(POINT(?2, ?3), location) AS distance FROM firm WHERE equi_list_str like ?1 ORDER BY distance desc LIMIT ?4, ?5 ", resultSetMapping="groupDetailsMapping")
+@org.hibernate.annotations.NamedNativeQuery(name="Firm.getNearFirm", query = "SELECT account_id, fname, phone_number, thumbnail, introduction, address, equi_list_str, ST_DISTANCE_SPHERE(POINT(?2, ?3), location) AS distance FROM firm WHERE equi_list_str like ?1 ORDER BY distance LIMIT ?4, ?5 ", resultSetMapping="groupDetailsMapping")
 public class Firm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
