@@ -39,7 +39,7 @@ public class ExpoNotificationService {
             e.printStackTrace();
         }
         String jsonStr = pushJSON.toString();
-        ResponseEntity<Object> responseEntity = restTemplateUtils.postForObject(expoPushEndpoint, jsonStr, AdDto.TransferWithdrawResponse.class, MediaType.APPLICATION_JSON_UTF8);
+        ResponseEntity<Object> responseEntity = restTemplateUtils.postForObject(expoPushEndpoint, jsonStr, null, AdDto.TransferWithdrawResponse.class, MediaType.APPLICATION_JSON_UTF8);
 
         return responseEntity;
     }

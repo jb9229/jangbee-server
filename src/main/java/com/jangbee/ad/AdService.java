@@ -82,7 +82,10 @@ public class AdService {
         return AdLocation.SEARCH;
     }
 
-    public boolean obTransferWithdraw(String fintechUseNum, int price) {
+    public boolean obTransferWithdraw(String authToken, String fintechUseNum, int price) {
+        /**
+         * AuthToken을 FB 접속해서 받아와야 하는데, Firebase Databe에서 결과를 event 메소드 방식이라, Future에 답아 결과를 받아 볼 방법을 찾이 못했음
+         */
         JSONObject userJSON = new JSONObject();
         try {
             userJSON.put("dps_print_content", "장비콜 광고비");
@@ -91,12 +94,12 @@ public class AdService {
             LocalDateTime ldt = LocalDateTime.now();
             DateTimeFormatter formmat1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.KOREA);
             userJSON.put("tran_dtime", formmat1.format(ldt));
-            ResponseEntity<AdDto.TransferWithdrawResponse> withdrawResult = restTemplateUtils.postForObject(adWithdrawUrl, userJSON.toString(), AdDto.TransferWithdrawResponse.class, MediaType.APPLICATION_JSON);
+            ResponseEntity<AdDto.TransferWithdrawResponse> withdrawResult = restTemplateUtils.postForObject(adWithdrawUrl, userJSON.toString(), authToken, AdDto.TransferWithdrawResponse.class, MediaType.APPLICATION_JSON);
 
             if (withdrawResult.getStatusCodeValue() == 200) {
                 AdDto.TransferWithdrawResponse tranResult = withdrawResult.getBody();
 
-                if (tranResult.getRsp_code() == "A0000") {
+                if (tranResult.getRsp_code().equals("A0000")) {
                     AdWithdrawHistory withHistory = modelMapper.map(tranResult, AdWithdrawHistory.class);
                     withHistRepository.save(withHistory);
 
@@ -111,7 +114,7 @@ public class AdService {
         return false;
     }
 
-    public boolean refreshObtoken(Ad ad) throws JSONException {
+    public boolean refreshObtoken(String authToken, Ad ad) throws JSONException {
         try {
             JSONObject userJSON = new JSONObject();
             userJSON.put("client_id", obClientId);
@@ -120,7 +123,7 @@ public class AdService {
             userJSON.put("scope", "login inquiry transfer");
             userJSON.put("grant_type", "refresh_token");
 
-            ResponseEntity<AdDto.RefreshTokenResponse> withdrawResult = restTemplateUtils.postForObject(obtokenUrl, userJSON.toString(), AdDto.RefreshTokenResponse.class, MediaType.APPLICATION_FORM_URLENCODED);
+            ResponseEntity<AdDto.RefreshTokenResponse> withdrawResult = restTemplateUtils.postForObject(obtokenUrl, userJSON.toString(), authToken, AdDto.RefreshTokenResponse.class, MediaType.APPLICATION_FORM_URLENCODED);
             if (withdrawResult.getStatusCodeValue() == 200) {
                 AdDto.RefreshTokenResponse tranResult = withdrawResult.getBody();
 

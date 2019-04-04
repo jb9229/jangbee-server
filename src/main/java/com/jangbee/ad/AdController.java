@@ -36,7 +36,7 @@ public class AdController {
         }
 
         //TODO 첫달 이체 진행
-        if(!service.obTransferWithdraw(create.getFintechUseNum(), create.getPrice())){throw new AdPriceWithdrawException();}
+        if(!service.obTransferWithdraw(create.getObAccessToken(), create.getFintechUseNum(), create.getPrice())){throw new AdPriceWithdrawException();}
 
         Ad newAd  =   service.createAd(create);
 

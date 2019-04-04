@@ -21,6 +21,6 @@ public class AdWithdrawHistory {
     private String bank_name;    // "A0000"
     private String account_alias; // 급여계좌
     private String account_holder_name;    // "홍길동"
-    private String tran_amt;    // "A0000"
+    private String tran_amt;    // "50000"
     private String print_content;
 }

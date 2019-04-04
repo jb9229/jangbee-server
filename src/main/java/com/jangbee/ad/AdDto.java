@@ -54,6 +54,8 @@ public class AdDto {
         private int price;
         @Min(1)
         private int forMonths;
+        @NotNull
+        private String obAccessToken; // Spring Firebase database event methode Future 문제로 인한 임시코드
     }
 
     @Data

@@ -59,8 +59,8 @@ public class AdWithdrawScheduler {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     AccountDto.FirebaseUser user = dataSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
                     // 1년 토큰 만료 확인
-                    Date discardDate = user.getObAcceTokenDiscDate();   // For Test Environment Null Check
-                    Date expireDate = user.getObAcceTokenExpDate(); // For Test Environment Null Check
+                    Date discardDate = user.getObAccTokenDiscDate();   // For Test Environment Null Check
+                    Date expireDate = user.getObAccTokenExpDate(); // For Test Environment Null Check
                     if(discardDate != null && discardDate.after(beforeTwentyDay)){
                         if(atDisMsgSendUserList.contains(user.getExpoPushToken())) { return; }
                         expoNotificationService.sendSingle(user.getExpoPushToken(), "광고비 이체통장 재인증 요청", "보안상 1년마다 이체통장 재인증을 받아야 합니다", ExpoNotiData.NOTI_OBAT_DISCARD);
@@ -70,7 +70,7 @@ public class AdWithdrawScheduler {
                     // 3개월 토큰 갱신 확인
                     if(expireDate != null && expireDate.after(now)){
                         try {
-                            boolean result = adservice.refreshObtoken(ad);
+                            boolean result = adservice.refreshObtoken(user.getObAccessToken(), ad);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -80,7 +80,7 @@ public class AdWithdrawScheduler {
                     Calendar afterTenDayCal = Calendar.getInstance();
                     afterTenDayCal.add(Calendar.DAY_OF_MONTH, 10);
                     if(ad.getNextWithdrawDate().before(ad.getEndDate()) && now.after(ad.getNextWithdrawDate())){
-                        boolean result = adservice.obTransferWithdraw(ad.getFintechUseNum(), ad.getPrice());
+                        boolean result = adservice.obTransferWithdraw(user.getObAccessToken(), ad.getFintechUseNum(), ad.getPrice());
 
                         if(!result){
                             Calendar afterSevenCal = Calendar.getInstance();

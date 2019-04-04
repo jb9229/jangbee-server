@@ -16,9 +16,11 @@ import java.util.List;
  */
 @Service
 public class RestTemplateUtils<T> {
-    public ResponseEntity<T> postForObject(String url, String jsonDatStr, Class<T> typeParameterClass, MediaType contentType) {
+    public ResponseEntity<T> postForObject(String url, String jsonDatStr, String authToken, Class<T> typeParameterClass, MediaType contentType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(contentType);
+        if(authToken != null){headers.add("Authorization", "Bearer " + authToken);}
+
         HttpEntity param= new HttpEntity(jsonDatStr, headers);
 
         RestTemplate restTemplate = new RestTemplate();

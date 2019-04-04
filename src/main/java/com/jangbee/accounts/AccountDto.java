@@ -15,10 +15,10 @@ public class AccountDto {
         Integer userType;
         String expoPushToken;
         @Temporal(TemporalType.DATE)
-        private Date obAcceTokenExpDate;
+        private Date obAccTokenExpDate;
         @Temporal(TemporalType.DATE)
-        private Date obAcceTokenDiscDate;
-        private String obAcceToken;
+        private Date obAccTokenDiscDate;
+        private String obAccessToken;
         private String obRefreshToken;
         private String obUserSeqNo;
     }
