@@ -21,5 +21,5 @@ public interface ClientEvaluLikeRepository extends JpaRepository<ClientEvaluLike
     @Transactional
     Long deleteByAccountId(String accountId);
 
-    boolean existsByAccountId(String accountId);
+    boolean existsByAccountIdAndEvaluId(String accountId, Long evaluId);
 }

@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -98,11 +100,24 @@ public class AdDto {
 
     @Data
     public static class RefreshTokenResponse {
+        private String rsp_code;    // "A0000"
+        private String rsp_message;    // "A0000"
+
         private String access_token;    // "홍길동"
         private String token_type;    // "A0000"
         private String expires_in;    // "A0000"
         private String refresh_token; // 급여계좌
         private String scope;
         private String user_seq_no;  // "12345678901234567890"
+        private Object accTokenExpDate;
+
+        public String getAccTokenExpDate() {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            Calendar tokenExpDateCal = Calendar.getInstance();
+            tokenExpDateCal.add(Calendar.MONTH, 3);
+
+            return dateFormat.format(tokenExpDateCal.getTime());
+        }
     }
 }

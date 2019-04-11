@@ -16,7 +16,11 @@ public class ClientEvalu {
     private Long id;
     private String accountId;
     private String cliName;
+    private String firmName;
     private String telNumber;
+    private String telNumber2;
+    private String telNumber3;
+    private String firmNumber;
     private String reason;
     private int likeCount;
     private int unlikeCount;

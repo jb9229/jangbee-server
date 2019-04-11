@@ -41,13 +41,13 @@ public class AdWithdrawScheduler {
     @Value( "${admin.email}" )
     private String adminEmail;
 
-//    @Scheduled(cron = "0 1 3 * * ?")
-    @Scheduled(cron = "30 * * * * ?")
+//    @Scheduled(cron = "30 * * * * ?")
+    @Scheduled(cron = "0 1 3 * * ?")
     public void checkRenewalAccToken(){
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
-        cal.add(Calendar.DAY_OF_MONTH, -20);
-        Date beforeTwentyDay = cal.getTime();
+        cal.add(Calendar.DAY_OF_MONTH, +20);
+        Date afterTwentyDay = cal.getTime();
         List<Ad> asList = adRepository.findAll();
 
 
@@ -59,18 +59,18 @@ public class AdWithdrawScheduler {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     AccountDto.FirebaseUser user = dataSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
                     // 1년 토큰 만료 확인
-                    Date discardDate = user.getObAccTokenDiscDate();   // For Test Environment Null Check
-                    Date expireDate = user.getObAccTokenExpDate(); // For Test Environment Null Check
-                    if(discardDate != null && discardDate.after(beforeTwentyDay)){
+                    Date discardDate = user.parseObAccTokenDiscDate();   // For Test Environment Null Check
+                    Date expireDate = user.parseObAccTokenExpDate(); // For Test Environment Null Check
+                    if(discardDate != null && afterTwentyDay.after(discardDate)){
                         if(atDisMsgSendUserList.contains(user.getExpoPushToken())) { return; }
                         expoNotificationService.sendSingle(user.getExpoPushToken(), "광고비 이체통장 재인증 요청", "보안상 1년마다 이체통장 재인증을 받아야 합니다", ExpoNotiData.NOTI_OBAT_DISCARD);
                         atDisMsgSendUserList.add(user.getExpoPushToken());
                     }
 
                     // 3개월 토큰 갱신 확인
-                    if(expireDate != null && expireDate.after(now)){
+                    if(expireDate != null && now.after(expireDate)){
                         try {
-                            boolean result = adservice.refreshObtoken(user.getObAccessToken(), ad);
+                            boolean result = adservice.refreshObtoken(user.getObAccessToken(), user.getObRefreshToken(), ad);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -25,4 +25,6 @@ public interface AdRepository extends JpaRepository<Ad, Long> {
     @Modifying    // update , delete Query시 @Modifying 어노테이션을 추가
     @Query(value="UPDATE Ad ad SET ad.fintechUseNum = :fintechUseNum WHERE ad.accountId = :accountId")
     Integer updateFintechUseNum(@Param("fintechUseNum") String fintechUseNum, @Param("accountId") String accountId);
+
+    List<Ad> getByAdLocationOrderByAdType(AdLocation adLocation);
 }

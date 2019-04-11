@@ -1,5 +1,9 @@
 package com.jangbee.ad;
 
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.jangbee.utils.RestTemplateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,12 +13,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.uid;
 
 /**
  * Created by test on 2019-02-14.
@@ -36,9 +43,11 @@ public class AdService {
     private String obClientSecret;
 
     public List<Ad> getByAdLocation(AdLocation adLocation, String equiTarget, String sidoTarget, String gugunTarget) {
-        List<Ad> adList = repository.getByAdLocationAndEquiTargetAndSidoTargetAndGugunTarget(adLocation, equiTarget, sidoTarget, gugunTarget);
+        if(adLocation.equals(AdLocation.MAIN)){
+            return repository.getByAdLocationOrderByAdType(adLocation);
+        }
 
-        return adList;
+        return repository.getByAdLocationAndEquiTargetAndSidoTargetAndGugunTarget(adLocation, equiTarget, sidoTarget, gugunTarget);
     }
 
     public List<Ad> getByAccountId(String accountId) {
@@ -114,27 +123,37 @@ public class AdService {
         return false;
     }
 
-    public boolean refreshObtoken(String authToken, Ad ad) throws JSONException {
+    public boolean refreshObtoken(String authToken, String refreshToken, Ad ad) throws JSONException {
         try {
-            JSONObject userJSON = new JSONObject();
-            userJSON.put("client_id", obClientId);
-            userJSON.put("client_secret", obClientSecret);
-//            userJSON.put("refresh_token", ad.getObRefreshToken());
-            userJSON.put("scope", "login inquiry transfer");
-            userJSON.put("grant_type", "refresh_token");
+            MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
+            requestBody.add("client_id", obClientId);
+            requestBody.add("client_secret", obClientSecret);
+            requestBody.add("refresh_token", refreshToken);
+            requestBody.add("scope", "login inquiry transfer");
+            requestBody.add("grant_type", "refresh_token");
 
-            ResponseEntity<AdDto.RefreshTokenResponse> withdrawResult = restTemplateUtils.postForObject(obtokenUrl, userJSON.toString(), authToken, AdDto.RefreshTokenResponse.class, MediaType.APPLICATION_FORM_URLENCODED);
+            ResponseEntity<AdDto.RefreshTokenResponse> withdrawResult = restTemplateUtils.postForObject(obtokenUrl, requestBody, null, AdDto.RefreshTokenResponse.class, new MediaType(MediaType.APPLICATION_FORM_URLENCODED, Charset.forName("UTF-8")));
             if (withdrawResult.getStatusCodeValue() == 200) {
-                AdDto.RefreshTokenResponse tranResult = withdrawResult.getBody();
+                AdDto.RefreshTokenResponse refreshResult = withdrawResult.getBody();
 
-//                ad.setObAccToken(tranResult.getAccess_token());
-//                ad.setObRefreshToken(tranResult.getRefresh_token());
+                if (refreshResult == null) {return false;}
+                String respCode = refreshResult.getRsp_code();
+                if (respCode != null && respCode.equals("O0001")) {return false;}
 
-                Calendar tokenExpDateCal = Calendar.getInstance();
-                tokenExpDateCal.add(Calendar.MONTH, 3);
-//                ad.setObAcctokenExpdate(tokenExpDateCal.getTime());
-                repository.saveAndFlush(ad);
+                Map<String,Object> update = new HashMap<String,Object>();
+                update.put("/users/" + ad.getAccountId() + "/obAccessToken", refreshResult.getAccess_token());
+                update.put("/users/" + ad.getAccountId() + "/obRefreshToken", refreshResult.getRefresh_token());
+                update.put("/users/" + ad.getAccountId() + "/obAccTokenExpDate", refreshResult.getAccTokenExpDate());
+
+                FirebaseDatabase.getInstance().getReference().updateChildren(update, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        // TODO Event Driven Return
+                    }
+                });
+
                 return true;
+
             }
         }catch (Exception ex){
             ex.printStackTrace();

@@ -1,6 +1,8 @@
 package com.jangbee;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -43,6 +45,12 @@ public class Application {
             e.printStackTrace();
         }
     }
+
+//    @Bean
+//    public DatabaseReference firebaseDatabse() {
+//        DatabaseReference firebase = FirebaseDatabase.getInstance().getReference();
+//        return firebase;
+//    }
 
     @Bean
     public ModelMapper modelMapper(){

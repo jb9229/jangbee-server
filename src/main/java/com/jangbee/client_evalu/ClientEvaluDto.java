@@ -14,8 +14,12 @@ public class ClientEvaluDto {
     public static class Response {
         private Long id;
         private String accountId;
-        private String telNumber;
         private String cliName;
+        private String firmName;
+        private String telNumber;
+        private String telNumber2;
+        private String telNumber3;
+        private String firmNumber;
         private String reason;
         private int likeCount;
         private int unlikeCount;
@@ -27,11 +31,20 @@ public class ClientEvaluDto {
         @NotNull
         private String accountId;
         @NotBlank
-        @Size(max = 45)
-        private String telNumber;
+        @Size(max = 8)
+        private String cliName;
+        @Size(max = 12)
+        private String firmName;
         @NotBlank
         @Size(max = 45)
-        private String cliName;
+        private String telNumber;
+        @Size(max = 45)
+        private String telNumber2;
+        @Size(max = 45)
+        private String telNumber3;
+
+        @Size(min=12, max=12)
+        private String firmNumber;
 
         @NotBlank
         @Size(max = 1000)
@@ -44,8 +57,19 @@ public class ClientEvaluDto {
         private Long id;
 
         @NotBlank
-        @Size(max = 45)
+        @Size(max = 8)
         private String cliName;
+
+        @Size(max = 12)
+        private String firmName;
+
+        @Size(max = 45)
+        private String telNumber2;
+        @Size(max = 45)
+        private String telNumber3;
+
+        @Size(min=12, max=12)
+        private String firmNumber;
 
         @NotBlank
         @Size(max = 1000)

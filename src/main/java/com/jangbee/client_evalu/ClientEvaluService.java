@@ -4,6 +4,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -30,8 +33,37 @@ public class ClientEvaluService {
         return repository.save(newEvaluation);
     }
 
+    public List<ClientEvalu> get(String cliName, String firmName, String telNumber, String firmNumber) {
+        if(cliName == null && firmName == null && telNumber == null && firmNumber == null){return new ArrayList();}
+
+        if(cliName != null) {
+            String param = "%"+cliName+"%";
+            return repository.findByCliNameLike(param);
+        }
+
+        if(firmName != null) {
+            String param = "%"+firmName+"%";
+            return repository.findByFirmNameLike(param);
+        }
+
+        if(telNumber != null) {
+            String param = "%"+telNumber+"%";
+            return repository.findByTelNumberLikeOrTelNumber2LikeOrTelNumber3Like(param, param, param);
+        }
+
+        if(firmNumber != null) {
+            String param = "%"+firmNumber+"%";
+            return repository.findByFirmNumberLike(param);
+        }
+        return null;
+    }
+
     public List<ClientEvalu> getClientEvaluAll() {
-        return repository.findAll();
+        Calendar beforMonthsCal = Calendar.getInstance();
+        beforMonthsCal.add(Calendar.MONTH, -2);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        return repository.getNewest(dateFormat.format(beforMonthsCal.getTime()), dateFormat.format(new Date()));
     }
 
     public boolean existTelNumer(String telNumber) {
@@ -46,6 +78,10 @@ public class ClientEvaluService {
         }
 
         updateCE.setCliName(update.getCliName());
+        updateCE.setFirmName(update.getFirmName());
+        updateCE.setTelNumber2(update.getTelNumber2());
+        updateCE.setTelNumber3(update.getTelNumber3());
+        updateCE.setFirmNumber(update.getFirmNumber());
         updateCE.setReason(update.getReason());
 
         return repository.saveAndFlush(updateCE);
@@ -102,7 +138,8 @@ public class ClientEvaluService {
         return false;
     }
 
-    public boolean existEvaluLike(String accountId) {
-        return likeRepository.existsByAccountId(accountId);
+    public boolean existEvaluLike(String accountId, Long evaluId) {
+        return likeRepository.existsByAccountIdAndEvaluId(accountId, evaluId);
     }
+
 }

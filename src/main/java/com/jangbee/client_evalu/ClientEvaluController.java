@@ -63,6 +63,18 @@ public class ClientEvaluController {
         return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
 
+    @RequestMapping(value="evaluation", method = RequestMethod.GET)
+    public ResponseEntity get(@RequestParam(required = false) String cliName, @RequestParam(required = false) String firmName, @RequestParam(required = false) String telNumber, @RequestParam(required = false) String firmNumber) {
+        List<ClientEvalu> list =   service.get(cliName, firmName, telNumber, firmNumber);
+
+
+        List<ClientEvaluDto.Response> responseList = list.parallelStream()
+                .map(newEvalu -> modelMapper.map(newEvalu, ClientEvaluDto.Response.class))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
+    }
+
     @RequestMapping(value="evaluation/exist/telnumber", method = RequestMethod.GET)
     public ResponseEntity existTelNumber(@RequestParam String telNumber) {
         boolean result =   service.existTelNumer(telNumber);
@@ -102,9 +114,9 @@ public class ClientEvaluController {
     }
 
     @RequestMapping(value="evaluation/like/exist", method = RequestMethod.GET)
-    public ResponseEntity existLike(@RequestParam String accountId){
+    public ResponseEntity existLike(@RequestParam String accountId, @RequestParam Long evaluId){
 
-        boolean result = service.existEvaluLike(accountId);
+        boolean result = service.existEvaluLike(accountId, evaluId);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
