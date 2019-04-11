@@ -41,8 +41,8 @@ public class AdWithdrawScheduler {
     @Value( "${admin.email}" )
     private String adminEmail;
 
-//    @Scheduled(cron = "30 * * * * ?")
-    @Scheduled(cron = "0 1 3 * * ?")
+    @Scheduled(cron = "30 * * * * *")
+//    @Scheduled(cron = "0 1 3 * * *")
     public void checkRenewalAccToken(){
         Calendar cal = Calendar.getInstance();
         Date now = cal.getTime();
