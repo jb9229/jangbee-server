@@ -74,14 +74,6 @@ public class AdDto {
         private String telNumber;
         @Min(0)
         private int forMonths;
-        // The following will be added later
-//        private String equiTarget;
-//        private String sidoTarget;
-//        private String gugunTarget;
-//        @NotNull
-//        private String fintechUseNum;
-//        @NotNull
-//        private Integer price;
     }
 
     @Data
@@ -115,7 +107,7 @@ public class AdDto {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             Calendar tokenExpDateCal = Calendar.getInstance();
-            tokenExpDateCal.add(Calendar.MONTH, 3);
+            tokenExpDateCal.add(Calendar.DAY_OF_MONTH, 85);
 
             return dateFormat.format(tokenExpDateCal.getTime());
         }
