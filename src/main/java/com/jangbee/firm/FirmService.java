@@ -40,7 +40,7 @@ public class FirmService {
         Firm firm = this.modelMapper.map(create, Firm.class);
         firm.setAccountId(accountId);
 
-        firm.setLocation(getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
+        firm.setLocation(GeoUtils.getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
 
         // Save Equipment Local for search
         String[] equipmentArr = firm.getEquiListStr().split(EQUIPMENT_STR_SEPERATOR);
@@ -79,20 +79,9 @@ public class FirmService {
         firm.setBlog(update.getBlog());
         firm.setHomepage(update.getHomepage());
         firm.setSns(update.getSns());
-        firm.setLocation(getPoint(update.getAddrLatitude(), update.getAddrLongitude()));
+        firm.setLocation(GeoUtils.getPoint(update.getAddrLatitude(), update.getAddrLongitude()));
 
         return this.repository.save(firm);
-    }
-
-    public Point getPoint(Double latitude, Double longitude) {
-        Geometry geometry;
-        try {
-            geometry = GeoUtils.wktToGeometry(String.format("POINT (%f %f)", longitude, latitude));
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return (Point)geometry;
     }
 
     public Page<Object> findNearFirm(String equipment, Double longitude, Double latitude, Pageable pageable) {
@@ -111,5 +100,9 @@ public class FirmService {
         Page<Firm> list = repository.findByEquiListStrLikeAndSidoAddrAndSigunguAddr(likeEquipmentStr, sidoAddr, sigunguAddr, pageable);
 
         return list;
+    }
+
+    public List<Firm> findEuipFirm(String equipment) {
+        return repository.findByEquiListStr(equipment);
     }
 }

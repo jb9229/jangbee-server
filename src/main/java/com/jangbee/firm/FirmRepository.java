@@ -15,6 +15,8 @@ public interface FirmRepository extends JpaRepository<Firm, Long> {
     List<FirmDto.ListResponse> getNearFirm(String equipment, Double longitude, Double latitude, int startRowNum, int size);
 
     Page<Firm> findByEquiListStrLikeAndSidoAddrAndSigunguAddr(String likeEquipmentStr, String sidoAddr, String sigunguAddr, Pageable pageable);
+
+    List<Firm> findByEquiListStr(String equiListStr);
 }
 
 // \n-- #pageable\n
