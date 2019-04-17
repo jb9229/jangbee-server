@@ -42,7 +42,7 @@ public class AdWithdrawScheduler {
     private String adminEmail;
 
 //    @Scheduled(cron = "30 * * * * *")
-    @Scheduled(cron = "30 40 09 * * *")
+    @Scheduled(cron = "0 1 3 * * *")
     public void checkRenewalAccToken(){
         System.out.println("=== Start Scheduling: checkRenewalAccToken ===");
         Calendar cal = Calendar.getInstance();
@@ -55,13 +55,10 @@ public class AdWithdrawScheduler {
         // Ad Loop
         List<String> atDisMsgSendUserList  = new ArrayList();
         asList.parallelStream().forEach((ad) -> {
-            System.out.println("=== Start Ad Check: "+ad.getAccountId()+" ===");
             FirebaseDatabase.getInstance().getReference("users/" +ad.getAccountId()).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    System.out.println("=== Get Firebase datasnapshot: "+dataSnapshot.toString()+" ===");
                     AccountDto.FirebaseUser user = dataSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
-                    System.out.println("=== Get Firebase user ExpDate: "+user.getObAccTokenExpDate()+" ===");
                     // 1년 토큰 만료 확인
                     Date discardDate = user.parseObAccTokenDiscDate();   // For Test Environment Null Check
                     Date expireDate = user.parseObAccTokenExpDate(); // For Test Environment Null Check

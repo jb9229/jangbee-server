@@ -24,10 +24,14 @@ public class WorkDto {
         private Double addrLatitude;
         private String matchedAccId;
         private WorkState workState;
+        private boolean applied;
     }
 
     @Data
     public static class Create{
+        @NotBlank
+        private String accountId;
+
         @NotBlank
         @Size(max=25)
         private String equipment;
@@ -54,5 +58,13 @@ public class WorkDto {
 
         @NotNull
         private Double addrLatitude;
+    }
+
+    @Data
+    public static class Apply {
+        @NotNull
+        private long workId;
+        @NotBlank
+        private String accountId;
     }
 }

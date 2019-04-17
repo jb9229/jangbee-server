@@ -15,6 +15,7 @@ public class Work {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String accountId;
     private String equipment;
     private String address;
     private String addressDetail;
@@ -28,6 +29,8 @@ public class Work {
     private Double addrLatitude;
     private String matchedAccId;
     private WorkState workState;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date applyNoticeTime;
 }
 
 enum WorkState {

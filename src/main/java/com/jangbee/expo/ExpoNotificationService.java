@@ -53,6 +53,8 @@ public class ExpoNotificationService {
     private JSONObject makeMessage(String title, String body, String token, String notiType) {
         JSONObject pushJSON = new JSONObject();
         JSONObject data = new JSONObject();
+        data.put("title", title);
+        data.put("body", body);
         if(notiType != null) { data.put("notice", notiType); }
         try {
             pushJSON.put("to", token);

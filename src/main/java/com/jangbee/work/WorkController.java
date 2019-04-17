@@ -90,13 +90,42 @@ public class WorkController {
         return new ResponseEntity<>(modelMapper.map(work, WorkDto.Response.class), HttpStatus.OK);
     }
 
-    @RequestMapping(value="works/firm/working", method = RequestMethod.GET)
-    public ResponseEntity getFirmWorkList(@RequestParam String equipment, @RequestParam String accountId) {
-        List<Work> works = service.getFirmWorkingList(equipment, accountId);
+    @RequestMapping(value="works/firm/openwork", method = RequestMethod.GET)
+    public ResponseEntity getOpenFirmWorkList(@RequestParam String equipment, @RequestParam String accountId) {
+        List<Work> works = service.getOpenFirmWorkList(equipment, accountId);
+        List<Long> applicantWorkIdList = service.getApplicantWorkIdList(accountId);
+
+        List<WorkDto.Response> content = works.parallelStream()
+                .map(work -> {
+                    WorkDto.Response res = modelMapper.map(work , WorkDto.Response.class);
+                    if(applicantWorkIdList.contains(res.getId())){res.setApplied(true);}
+                    return res;
+                })
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="works/firm/matchedwork", method = RequestMethod.GET)
+    public ResponseEntity getMatchedFirmWorkList(@RequestParam String equipment, @RequestParam String accountId) {
+        List<Work> works = service.getMatchedFirmWorkList(equipment, accountId);
 
         List<WorkDto.Response> content = works.parallelStream()
                 .map(work -> modelMapper.map(work , WorkDto.Response.class))
                 .collect(Collectors.toList());
+
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="works/firm/apply", method = RequestMethod.PUT)
+    public ResponseEntity applyWork(@RequestBody @Valid WorkDto.Apply apply, BindingResult result) {
+        if(result.hasErrors()){
+            throw new JBBadRequestException();
+        }
+
+        Work work = service.applyWork(apply);
+
+        WorkDto.Response content = modelMapper.map(work , WorkDto.Response.class);
 
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
