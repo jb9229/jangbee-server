@@ -7,7 +7,9 @@ import com.jangbee.common.JBBadRequestException;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
 import com.jangbee.firm.Firm;
+import com.jangbee.firm.FirmDto;
 import com.jangbee.firm.FirmService;
+import com.jangbee.firm_evalu.FirmEvaluService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +34,12 @@ public class WorkController {
     private WorkService service;
 
     @Autowired
-    private FirmService firmService;
+    private WorkApplicantService workApplicantService;
+
+    @Autowired
+    FirmEvaluService firmEvaluService;
+
+    @Autowired private FirmService firmService;
 
     @Autowired
     ExpoNotificationService expoNotificationService;
@@ -90,7 +97,7 @@ public class WorkController {
         return new ResponseEntity<>(modelMapper.map(work, WorkDto.Response.class), HttpStatus.OK);
     }
 
-    @RequestMapping(value="works/firm/openwork", method = RequestMethod.GET)
+    @RequestMapping(value="works/firm/open", method = RequestMethod.GET)
     public ResponseEntity getOpenFirmWorkList(@RequestParam String equipment, @RequestParam String accountId) {
         List<Work> works = service.getOpenFirmWorkList(equipment, accountId);
         List<Long> applicantWorkIdList = service.getApplicantWorkIdList(accountId);
@@ -106,7 +113,7 @@ public class WorkController {
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
-    @RequestMapping(value="works/firm/matchedwork", method = RequestMethod.GET)
+    @RequestMapping(value="works/firm/matched", method = RequestMethod.GET)
     public ResponseEntity getMatchedFirmWorkList(@RequestParam String equipment, @RequestParam String accountId) {
         List<Work> works = service.getMatchedFirmWorkList(equipment, accountId);
 
@@ -126,6 +133,61 @@ public class WorkController {
         Work work = service.applyWork(apply);
 
         WorkDto.Response content = modelMapper.map(work , WorkDto.Response.class);
+
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="works/firm/selected", method = RequestMethod.PUT)
+    public ResponseEntity applyWork(@RequestParam Long workId, @RequestParam String accountId) {
+        boolean result = service.selectedFirm(workId, accountId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="works/client/open", method = RequestMethod.GET)
+    public ResponseEntity getOpenClientWorkList(@RequestParam String accountId) {
+        List<Work> works = service.getOpenClientWorkList(accountId);
+
+        List<WorkDto.Response> content = works.parallelStream()
+                .map(work -> {
+                    WorkDto.Response res = modelMapper.map(work , WorkDto.Response.class);
+                    Long applicantCount = service.getApplicantCount(work.getId());
+                    res.setApplicantCount(applicantCount);
+                    return res;
+                })
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="works/client/matched", method = RequestMethod.GET)
+    public ResponseEntity getMatchedClientWorkList(@RequestParam String accountId) {
+        List<Work> works = service.getOpenClientWorkList(accountId);
+
+        List<WorkDto.Response> content = works.parallelStream()
+                .map(work -> {
+                    WorkDto.Response res = modelMapper.map(work , WorkDto.Response.class);
+
+                    if(firmEvaluService.getFirmEvaluByWorkId(work.getId()) != null){
+                        res.setFirmEstimated(true);
+                    }
+                    return res;
+                })
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value="works/applicants", method = RequestMethod.GET)
+    public ResponseEntity getAppliFirmList(@RequestParam Long workId) {
+        List<String> appliAccountIdList = workApplicantService.getAccountIdList(workId);
+
+        List<Firm> firmList = firmService.getFirmList(appliAccountIdList);
+
+        List<FirmDto.Response> content = firmList.parallelStream()
+                .map(work -> modelMapper.map(work , FirmDto.Response.class))
+                .collect(Collectors.toList());
 
         return new ResponseEntity<>(content, HttpStatus.OK);
     }

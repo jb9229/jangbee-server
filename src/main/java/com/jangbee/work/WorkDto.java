@@ -25,6 +25,18 @@ public class WorkDto {
         private String matchedAccId;
         private WorkState workState;
         private boolean applied;
+        private long applicantCount;
+        private boolean firmEstimated;
+
+        public Object getEndDate() {
+            if(startDate == null){return null;}
+            long periodDate = (long)(period < 1 ? 1 : period);
+            long periodTime = periodDate * 24 * 60* 1000;
+            Date endDate = new Date();
+            endDate.setTime(startDate.getTime() + periodTime);
+
+            return endDate;
+        }
     }
 
     @Data

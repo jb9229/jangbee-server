@@ -105,4 +105,8 @@ public class FirmService {
     public List<Firm> findEuipFirm(String equipment) {
         return repository.findByEquiListStr(equipment);
     }
+
+    public List<Firm> getFirmList(List<String> appliAccountIdList) {
+        return repository.findByAccountIdIn(appliAccountIdList);
+    }
 }

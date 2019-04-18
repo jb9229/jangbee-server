@@ -38,6 +38,11 @@ public class WorkService {
         return repository.getOpenFirmWorkList(equipment, accountId);
     }
 
+
+    public List<Work> getOpenClientWorkList(String accountId) {
+        return repository.getOpenClientWorkList(accountId);
+    }
+
     public List<Work> getMatchedFirmWorkList(String equipment, String accountId) {
         return repository.getMatchedFirmWorkList(equipment, accountId);
     }
@@ -78,5 +83,22 @@ public class WorkService {
 
     public List<Long> getApplicantWorkIdList(String accountId) {
         return applicantRepository.getWorkIdList(accountId);
+    }
+
+    public Long getApplicantCount(Long id) {
+        return applicantRepository.countByWorkId(id);
+    }
+
+    public boolean selectedFirm(Long workId, String accountId) {
+        Work work = repository.getOne(workId);
+
+        if(work != null){
+            work.setMatchedAccId(accountId);
+            work.setWorkState(WorkState.SELECTED);
+
+            return true;
+        }
+
+        return false;
     }
 }

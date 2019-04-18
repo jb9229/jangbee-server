@@ -17,6 +17,8 @@ public interface FirmRepository extends JpaRepository<Firm, Long> {
     Page<Firm> findByEquiListStrLikeAndSidoAddrAndSigunguAddr(String likeEquipmentStr, String sidoAddr, String sigunguAddr, Pageable pageable);
 
     List<Firm> findByEquiListStr(String equiListStr);
+
+    List<Firm> findByAccountIdIn(List<String> appliAccountIdList);
 }
 
 // \n-- #pageable\n
