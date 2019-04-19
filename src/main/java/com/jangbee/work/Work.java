@@ -31,6 +31,7 @@ public class Work {
     private WorkState workState;
     @Temporal(TemporalType.TIMESTAMP)
     private Date applyNoticeTime;
+    private Date selectNoticeTime;
 }
 
 enum WorkState {

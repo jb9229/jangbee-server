@@ -137,9 +137,24 @@ public class WorkController {
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
 
-    @RequestMapping(value="works/firm/selected", method = RequestMethod.PUT)
-    public ResponseEntity applyWork(@RequestParam Long workId, @RequestParam String accountId) {
-        boolean result = service.selectedFirm(workId, accountId);
+    @RequestMapping(value="works/firm/accept", method = RequestMethod.PUT)
+    public ResponseEntity acceptWork(@RequestBody @Valid WorkDto.Accept accept, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            throw new JBBadRequestException();
+        }
+
+        boolean result = service.acceptWork(accept);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="works/client/select", method = RequestMethod.PUT)
+    public ResponseEntity selectWork(@RequestBody @Valid WorkDto.Select select, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            throw new JBBadRequestException();
+        }
+
+        boolean result = service.selectedFirm(select);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -153,6 +168,7 @@ public class WorkController {
                     WorkDto.Response res = modelMapper.map(work , WorkDto.Response.class);
                     Long applicantCount = service.getApplicantCount(work.getId());
                     res.setApplicantCount(applicantCount);
+                    res.setOverAcceptTime(res.isOverAcceptTime());
                     return res;
                 })
                 .collect(Collectors.toList());

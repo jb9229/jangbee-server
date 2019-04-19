@@ -12,4 +12,6 @@ public class ExpoNotiData {
     public static String NOTI_OBAT_FAIL_WITHDRAW = "NOTI_FAIL_WITHDRAW";
     public static String NOTI_WORK_REGISTER = "NOTI_WORK_REGISTER";
     public static String NOTI_WORK_ADD_REGISTER = "NOTI_WORK_ADD_REGISTER";
+    public static String NOTI_WORK_SELECTED = "NOTI_WORK_SELECTED";
+    public static String NOTI_WORK_ACCEPT = "NOTI_WORK_ACCEPT";
 }

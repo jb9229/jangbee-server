@@ -1,18 +1,14 @@
 package com.jangbee.work;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.jangbee.accounts.AccountDto;
+import com.jangbee.common.NoticeService;
 import com.jangbee.expo.ExpoNotiData;
-import com.jangbee.expo.ExpoNotificationService;
 import com.jangbee.utils.GeoUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +21,8 @@ public class WorkService {
     private ModelMapper modelMapper;
     @Autowired private WorkRepository repository;
     @Autowired private WorkApplicantRepository applicantRepository;
-    @Autowired ExpoNotificationService expoNotificationService;
+    @Autowired
+    NoticeService noticeService;
 
     public Work create(WorkDto.Create create) {
         Work newWork = this.modelMapper.map(create, Work.class);
@@ -62,20 +59,8 @@ public class WorkService {
         if(applyNoticeTime == null || beforeTwenty.after(applyNoticeTime)) {
             // Update notice Time
             repository.updateApplyNoticeTime(new Date(), work.getId());
-            // Notice
-            FirebaseDatabase.getInstance().getReference("users/" +work.getAccountId()).addListenerForSingleValueEvent(
-                    new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            AccountDto.FirebaseUser user = dataSnapshot.getValue(AccountDto.FirebaseUser.class);
-                            expoNotificationService.sendSingle(user.getExpoPushToken(), "일감 지원자 추가됨", "등록하신 일감에 신규 지원자가 있습니다, 확인 후 지원자 선택을 해 주세요.", ExpoNotiData.NOTI_WORK_ADD_REGISTER);
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+            noticeService.noticeCommonMSG(work.getAccountId(), "일감 지원자 추가됨", "등록하신 일감에 신규 지원자가 있습니다, 확인 후 지원자 선택을 해 주세요.", ExpoNotiData.NOTI_WORK_ADD_REGISTER);
         }
 
         return work;
@@ -89,16 +74,35 @@ public class WorkService {
         return applicantRepository.countByWorkId(id);
     }
 
-    public boolean selectedFirm(Long workId, String accountId) {
-        Work work = repository.getOne(workId);
+    public boolean selectedFirm(WorkDto.Select select) {
+        Work work = repository.findOne(select.getWorkId());
 
-        if(work != null){
-            work.setMatchedAccId(accountId);
+        if (work != null) {
+            work.setMatchedAccId(select.getAccountId());
             work.setWorkState(WorkState.SELECTED);
+            work.setSelectNoticeTime(new Date());
 
+            repository.saveAndFlush(work);
+
+            LocalDateTime afterThreeHour = LocalDateTime.now();
+            afterThreeHour.plusHours(3);
+            noticeService.noticeCommonMSG(select.getAccountId(), "배차 요청함", "지원하신 일감에 배차가 요청되었습니다, 수락/거절해 주세요(무응답시, "+afterThreeHour.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))+" 이후로 취소될 수 있음)", ExpoNotiData.NOTI_WORK_SELECTED);
             return true;
         }
 
+        return false;
+    }
+
+    public boolean acceptWork(WorkDto.Accept accept) {
+        Work work = repository.findOne(accept.getWorkId());
+
+        if (work != null && work.getWorkState().equals(WorkState.SELECTED)) {
+            work.setWorkState(WorkState.MATCHED);
+            repository.saveAndFlush(work);
+
+            noticeService.noticeCommonMSG(work.getAccountId(), "배차됨", "장비업체에서 곧 전화가 갈 것입니다", ExpoNotiData.NOTI_WORK_ACCEPT);
+            return true;
+        }
         return false;
     }
 }

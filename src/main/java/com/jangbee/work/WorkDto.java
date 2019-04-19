@@ -18,6 +18,7 @@ public class WorkDto {
         private String address;
         private String addressDetail;
         private Date startDate;
+        private Date selectNoticeTime;
         private float period;
         private String detailRequest;
         private Double addrLongitude;
@@ -27,6 +28,7 @@ public class WorkDto {
         private boolean applied;
         private long applicantCount;
         private boolean firmEstimated;
+        private boolean overAcceptTime;
 
         public Object getEndDate() {
             if(startDate == null){return null;}
@@ -36,6 +38,17 @@ public class WorkDto {
             endDate.setTime(startDate.getTime() + periodTime);
 
             return endDate;
+        }
+
+        public boolean isOverAcceptTime() {
+            if (workState != null && workState.equals(WorkState.SELECTED) && selectNoticeTime != null) {
+                Date beforThreeHour = new Date();
+                beforThreeHour.setTime(beforThreeHour.getTime() - (3*24*60*1000));
+                if (selectNoticeTime.before(beforThreeHour)){
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -74,6 +87,23 @@ public class WorkDto {
 
     @Data
     public static class Apply {
+        @NotNull
+        private long workId;
+        @NotBlank
+        private String accountId;
+    }
+
+    @Data
+    public static class Select {
+        @NotNull
+        private long workId;
+        @NotBlank
+        private String accountId;
+    }
+
+
+    @Data
+    public static class Accept {
         @NotNull
         private long workId;
         @NotBlank
