@@ -17,4 +17,6 @@ public interface WorkApplicantRepository extends JpaRepository<WorkApplicant, Lo
 
     @Query(value="SELECT wa.accountId FROM WorkApplicant wa WHERE wa.workId = :workId")
     List<String> findByWorkId(@Param("workId") Long workId);
+
+    long deleteByWorkIdAndAccountId(long workId, String accountId);
 }

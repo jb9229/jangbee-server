@@ -21,6 +21,7 @@ public class Work {
     private String addressDetail;
     @Temporal(TemporalType.DATE)
     private Date startDate;
+    private Date endDate;
     private float period;
     private String detailRequest;
     @Column(name = "address_point", columnDefinition = "POINT")
@@ -32,12 +33,15 @@ public class Work {
     @Temporal(TemporalType.TIMESTAMP)
     private Date applyNoticeTime;
     private Date selectNoticeTime;
-}
 
-enum WorkState {
-    OPEN,
-    SELECTED,
-    MATCHED,
-    WORKING,
-    CLOSED,
+    public void calEndDate() {
+        if(startDate == null){return;}
+
+        long periodDate = (long)(period < 1 ? 0 : period-1);
+        long periodTime = periodDate * 24 * 60* 1000;
+        Date endDate = new Date();
+        endDate.setTime(startDate.getTime() + periodTime);
+
+        setEndDate(endDate);
+    }
 }

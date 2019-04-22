@@ -5,7 +5,6 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.jangbee.ad.AdRepository;
 import com.jangbee.ad.AdService;
-import com.jangbee.ad.AdWithdrawScheduler;
 import com.jangbee.expo.ExpoNotificationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,11 +20,11 @@ import java.io.IOException;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class AdWithdrawSchedulerTest {
+public class DailySchedulerTest {
     static String FBDB_BASE_URL="https://jangbee-inpe21.firebaseio.com";
 
     @Autowired
-    AdWithdrawScheduler scheduler;
+    DailyScheduler scheduler;
 
     @Autowired
     AdService adservice;

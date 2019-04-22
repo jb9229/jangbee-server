@@ -148,6 +148,17 @@ public class WorkController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @RequestMapping(value="works/firm/abandon", method = RequestMethod.PUT)
+    public ResponseEntity abandonWork(@RequestBody @Valid WorkDto.Abandon abandon, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            throw new JBBadRequestException();
+        }
+
+        boolean result = service.abandonWork(abandon);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @RequestMapping(value="works/client/select", method = RequestMethod.PUT)
     public ResponseEntity selectWork(@RequestBody @Valid WorkDto.Select select, BindingResult bindingResult) {
         if(bindingResult.hasErrors()){
@@ -178,7 +189,7 @@ public class WorkController {
 
     @RequestMapping(value="works/client/matched", method = RequestMethod.GET)
     public ResponseEntity getMatchedClientWorkList(@RequestParam String accountId) {
-        List<Work> works = service.getOpenClientWorkList(accountId);
+        List<Work> works = service.getMatchedClientWorkList(accountId);
 
         List<WorkDto.Response> content = works.parallelStream()
                 .map(work -> {

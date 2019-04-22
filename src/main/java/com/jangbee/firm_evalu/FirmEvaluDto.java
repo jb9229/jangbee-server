@@ -1,5 +1,6 @@
 package com.jangbee.firm_evalu;
 
+import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -10,15 +11,13 @@ import javax.validation.constraints.Size;
  */
 public class FirmEvaluDto {
 
+    @Data
     public static class Create {
         @NotNull
         private Long workId;
-        @NotBlank
-        private String accountId;
-        @NotBlank
-        private String firmAccountId;
+
         @NotNull
-        private Byte rate;
+        private Byte rating;
 
         @NotBlank
         @Size(max=200)

@@ -1,14 +1,21 @@
-package com.jangbee.ad;
+package com.jangbee.scheduler;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.jangbee.accounts.AccountDto;
+import com.jangbee.ad.Ad;
+import com.jangbee.ad.AdRepository;
+import com.jangbee.ad.AdService;
 import com.jangbee.common.Email;
 import com.jangbee.common.EmailSender;
+import com.jangbee.common.JangbeeNoticeService;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
+import com.jangbee.work.Work;
+import com.jangbee.work.WorkRepository;
+import com.jangbee.work.WorkState;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +32,17 @@ import java.util.List;
  * Created by test on 2019-03-08.
  */
 @Component
-public class AdWithdrawScheduler {
+public class DailyScheduler {
     @Autowired
     AdService adservice;
     @Autowired
     EmailSender emailSender;
-    @Autowired AdRepository adRepository;
+    @Autowired
+    AdRepository adRepository;
+    @Autowired
+    WorkRepository workRepository;
 
+    @Autowired JangbeeNoticeService jbNoticeService;
     @Autowired
     ExpoNotificationService expoNotificationService;
 
@@ -52,7 +63,7 @@ public class AdWithdrawScheduler {
         List<Ad> asList = adRepository.findAll();
 
 
-        // Ad Loop
+        //*********** Ad Daily Scheduler Jab and Ad Loop ***********
         List<String> atDisMsgSendUserList  = new ArrayList();
         asList.parallelStream().forEach((ad) -> {
             FirebaseDatabase.getInstance().getReference("users/" +ad.getAccountId()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -122,6 +133,44 @@ public class AdWithdrawScheduler {
                 }
             });
         });
+
+
+        List<Work> workList = workRepository.getOvertimeOpenWorkList(new Date(), WorkState.WORKING);
+
+        List<Work> deleteWork = new ArrayList();
+        for(Work work : workList) {
+            if(work.getWorkState().equals(WorkState.MATCHED)){
+                work.setWorkState(WorkState.WORKING);
+                workRepository.saveAndFlush(work);
+            }
+
+            if(work.getWorkState().equals(WorkState.OPEN) || work.getWorkState().equals(WorkState.SELECTED)){
+                deleteWork.add(work);
+            }
+        }
+
+        if (!deleteWork.isEmpty()) {
+           workRepository.delete(deleteWork);
+        }
+
+        //Change Working -> Close
+        Calendar beforeOneDay = Calendar.getInstance();
+        beforeOneDay.add(Calendar.DAY_OF_MONTH, -1);
+        List<Work> endWorkList = workRepository.getOvertimeWorkingWorkList(beforeOneDay.getTime(), WorkState.WORKING);
+        for (Work work : endWorkList){
+            work.setWorkState(WorkState.CLOSED);
+            workRepository.saveAndFlush(work);
+
+            jbNoticeService.noticeCommonMSG(work.getAccountId(), "배차 종료", "["+work.getEquipment()+"]장비 잘 사용하셨습니까? 장비 업체의 평가가 쌓이면 추후 업체의 보다 질 좋은 서비스로 돌아 옵니다, 장비 평가를 부탁 드립니다.", ExpoNotiData.NOTI_WORK_CLOSED);
+        }
+
+        //Delete After 2 Month works
+        Calendar beforeTwoMonth = Calendar.getInstance();
+        beforeTwoMonth.add(Calendar.MONTH, -2);
+
+        List<Work> overWork = workRepository.getOverTwoMonthWorkList(beforeTwoMonth.getTime(), WorkState.CLOSED);
+        workRepository.delete(overWork);
+
     }
 
     private void sendWithdrawFailEmail(Ad ad) {

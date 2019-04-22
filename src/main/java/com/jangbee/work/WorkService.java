@@ -1,6 +1,6 @@
 package com.jangbee.work;
 
-import com.jangbee.common.NoticeService;
+import com.jangbee.common.JangbeeNoticeService;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.utils.GeoUtils;
 import org.modelmapper.ModelMapper;
@@ -22,26 +22,32 @@ public class WorkService {
     @Autowired private WorkRepository repository;
     @Autowired private WorkApplicantRepository applicantRepository;
     @Autowired
-    NoticeService noticeService;
+    JangbeeNoticeService jangbeeNoticeService;
 
     public Work create(WorkDto.Create create) {
         Work newWork = this.modelMapper.map(create, Work.class);
         newWork.setAddressPoint(GeoUtils.getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
+        newWork.calEndDate();
 
         return repository.save(newWork);
     }
 
     public List<Work> getOpenFirmWorkList(String equipment, String accountId) {
-        return repository.getOpenFirmWorkList(equipment, accountId);
+        return repository.getOpenFirmWorkList(equipment, accountId, WorkState.OPEN, WorkState.SELECTED);
     }
 
 
     public List<Work> getOpenClientWorkList(String accountId) {
-        return repository.getOpenClientWorkList(accountId);
+        return repository.getOpenClientWorkList(accountId, WorkState.SELECTED);
+    }
+
+
+    public List<Work> getMatchedClientWorkList(String accountId) {
+        return repository.getMatchedClientWorkList(accountId, WorkState.MATCHED);
     }
 
     public List<Work> getMatchedFirmWorkList(String equipment, String accountId) {
-        return repository.getMatchedFirmWorkList(equipment, accountId);
+        return repository.getMatchedFirmWorkList(equipment, accountId, WorkState.MATCHED);
     }
 
     public Work applyWork(WorkDto.Apply apply) {
@@ -60,7 +66,7 @@ public class WorkService {
             // Update notice Time
             repository.updateApplyNoticeTime(new Date(), work.getId());
 
-            noticeService.noticeCommonMSG(work.getAccountId(), "일감 지원자 추가됨", "등록하신 일감에 신규 지원자가 있습니다, 확인 후 지원자 선택을 해 주세요.", ExpoNotiData.NOTI_WORK_ADD_REGISTER);
+            jangbeeNoticeService.noticeCommonMSG(work.getAccountId(), "일감 지원자 추가됨", "등록하신 일감에 신규 지원자가 있습니다, 확인 후 지원자 선택을 해 주세요.", ExpoNotiData.NOTI_WORK_ADD_REGISTER);
         }
 
         return work;
@@ -86,7 +92,7 @@ public class WorkService {
 
             LocalDateTime afterThreeHour = LocalDateTime.now();
             afterThreeHour.plusHours(3);
-            noticeService.noticeCommonMSG(select.getAccountId(), "배차 요청함", "지원하신 일감에 배차가 요청되었습니다, 수락/거절해 주세요(무응답시, "+afterThreeHour.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))+" 이후로 취소될 수 있음)", ExpoNotiData.NOTI_WORK_SELECTED);
+            jangbeeNoticeService.noticeCommonMSG(select.getAccountId(), "배차 요청함", "지원하신 일감에 배차가 요청되었습니다, 수락/거절해 주세요(무응답시, "+afterThreeHour.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))+" 이후로 취소될 수 있음)", ExpoNotiData.NOTI_WORK_SELECTED);
             return true;
         }
 
@@ -100,9 +106,28 @@ public class WorkService {
             work.setWorkState(WorkState.MATCHED);
             repository.saveAndFlush(work);
 
-            noticeService.noticeCommonMSG(work.getAccountId(), "배차됨", "장비업체에서 곧 전화가 갈 것입니다", ExpoNotiData.NOTI_WORK_ACCEPT);
+            jangbeeNoticeService.noticeCommonMSG(work.getAccountId(), "배차됨", "장비업체에서 곧 전화가 갈 것입니다", ExpoNotiData.NOTI_WORK_ACCEPT);
             return true;
         }
+
+        return false;
+    }
+
+    public boolean abandonWork(WorkDto.Abandon abandon) {
+        Work work = repository.findOne(abandon.getWorkId());
+
+        if (work != null && work.getWorkState().equals(WorkState.SELECTED) && work.getMatchedAccId().equals(abandon.getMatchedAccId())) {
+            work.setWorkState(WorkState.OPEN);
+            work.setMatchedAccId(null);
+            repository.saveAndFlush(work);
+
+            jangbeeNoticeService.noticeCommonMSG(work.getAccountId(), "장비업체 배차포기", "아쉽게도 선택하신 업체가 사정상 배차를 포기했습니다, 다른 지원자를 다시 선택해 주세요(지원자 발생 후, 배차요청을 바로하시면 업체가 배차포기를 할 확률을 줄일 수 있습니다)", ExpoNotiData.NOTI_WORK_ABANDON);
+
+            applicantRepository.deleteByWorkIdAndAccountId(abandon.getWorkId(), abandon.getMatchedAccId());
+
+            return true;
+        }
+
         return false;
     }
 }

@@ -18,6 +18,7 @@ public class WorkDto {
         private String address;
         private String addressDetail;
         private Date startDate;
+        private Date endDate;
         private Date selectNoticeTime;
         private float period;
         private String detailRequest;
@@ -29,16 +30,6 @@ public class WorkDto {
         private long applicantCount;
         private boolean firmEstimated;
         private boolean overAcceptTime;
-
-        public Object getEndDate() {
-            if(startDate == null){return null;}
-            long periodDate = (long)(period < 1 ? 1 : period);
-            long periodTime = periodDate * 24 * 60* 1000;
-            Date endDate = new Date();
-            endDate.setTime(startDate.getTime() + periodTime);
-
-            return endDate;
-        }
 
         public boolean isOverAcceptTime() {
             if (workState != null && workState.equals(WorkState.SELECTED) && selectNoticeTime != null) {
@@ -108,5 +99,13 @@ public class WorkDto {
         private long workId;
         @NotBlank
         private String accountId;
+    }
+
+    @Data
+    public static class Abandon {
+        @NotNull
+        private long workId;
+        @NotBlank
+        private String matchedAccId;
     }
 }

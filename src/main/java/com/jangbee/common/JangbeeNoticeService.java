@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
  * Created by test on 2019-04-19.
  */
 @Service
-public class NoticeService {
+public class JangbeeNoticeService {
     @Autowired
     ExpoNotificationService expoNotificationService;
 

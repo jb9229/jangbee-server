@@ -19,6 +19,6 @@ public class FirmEvalu {
     private Long workId;
     private String accountId;
     private String firmAccountId;
-    private byte rate;
+    private byte rating;
     private String comment;
 }
