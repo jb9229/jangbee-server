@@ -20,7 +20,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     @Query(value="SELECT w FROM Work w WHERE w.accountId = :accountId and w.workState <= :workState ORDER BY w.workState desc")
     List<Work> getOpenClientWorkList(@Param("accountId")String accountId, @Param("workState") WorkState workingWorkState);
 
-    @Query(value="SELECT w FROM Work w WHERE w.equipment = :equipment and w.workState = :workState and w.matchedAccId = :accountId ORDER BY w.startDate desc")
+    @Query(value="SELECT w FROM Work w WHERE w.equipment = :equipment and w.workState >= :workState and w.matchedAccId = :accountId ORDER BY w.startDate desc")
     List<Work> getMatchedFirmWorkList(@Param("equipment")String equipment, @Param("accountId")String accountId, @Param("workState") WorkState workState);
 
     @Query(value="SELECT w FROM Work w WHERE w.accountId = :accountId and w.workState >= :workState ORDER BY w.workState")

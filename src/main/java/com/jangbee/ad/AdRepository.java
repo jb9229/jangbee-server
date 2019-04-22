@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public interface AdRepository extends JpaRepository<Ad, Long> {
     Ad getByEquiTargetAndSidoTargetAndGugunTargetAndAdType(String equipment, String sidoTarget, String gunguTarget, short adType);
 
     @Modifying    // update , delete Query시 @Modifying 어노테이션을 추가
+    @Transactional
     @Query(value="UPDATE Ad ad SET ad.fintechUseNum = :fintechUseNum WHERE ad.accountId = :accountId")
     Integer updateFintechUseNum(@Param("fintechUseNum") String fintechUseNum, @Param("accountId") String accountId);
 

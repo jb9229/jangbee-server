@@ -76,21 +76,14 @@ public class WorkController {
 
 
                      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                     expoNotificationService.sendMulti(tokenList, "[ "+work.getEquipment()+" ]일감 등록됨", "시작일: "+dateFormat.format(work.getStartDate())+", 장소: "+work.getAddress(), ExpoNotiData.NOTI_WORK_REGISTER);
+                     expoNotificationService.sendMulti(tokenList, "[ "+work.getEquipment()+" ] 일감 등록됨", "#시작일: "+dateFormat.format(work.getStartDate())+", #장소: "+work.getAddress(), ExpoNotiData.NOTI_WORK_REGISTER);
 //                     done.countDown();
                  }
 
                  @Override
                  public void onCancelled(DatabaseError databaseError) {
-//                     done.countDown();
                  }
              });
-
-//            try {
-//                done.await(); //it will wait till the response is received from firebase.
-//            } catch(InterruptedException e) {
-//                e.printStackTrace();
-//            }
         }
 
 

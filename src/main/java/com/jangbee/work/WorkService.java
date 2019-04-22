@@ -25,9 +25,13 @@ public class WorkService {
     JangbeeNoticeService jangbeeNoticeService;
 
     public Work create(WorkDto.Create create) {
+        String accountId = create.getAccountId();
+        create.setAccountId(null);
         Work newWork = this.modelMapper.map(create, Work.class);
+        newWork.setAccountId(accountId);
         newWork.setAddressPoint(GeoUtils.getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
         newWork.calEndDate();
+        newWork.setWorkState(WorkState.OPEN);
 
         return repository.save(newWork);
     }

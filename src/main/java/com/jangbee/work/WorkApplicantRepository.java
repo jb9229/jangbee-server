@@ -1,8 +1,10 @@
 package com.jangbee.work;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,5 +20,7 @@ public interface WorkApplicantRepository extends JpaRepository<WorkApplicant, Lo
     @Query(value="SELECT wa.accountId FROM WorkApplicant wa WHERE wa.workId = :workId")
     List<String> findByWorkId(@Param("workId") Long workId);
 
+    @Modifying
+    @Transactional
     long deleteByWorkIdAndAccountId(long workId, String accountId);
 }
