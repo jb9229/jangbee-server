@@ -1,7 +1,6 @@
 package com.jangbee.client_evalu;
 
 import com.jangbee.common.JBBadRequestException;
-import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import com.vividsolutions.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

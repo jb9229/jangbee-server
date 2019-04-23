@@ -17,6 +17,7 @@ public class Work {
     private Long id;
     private String accountId;
     private String equipment;
+    private String phoneNumber;
     private String address;
     private String addressDetail;
     @Temporal(TemporalType.DATE)

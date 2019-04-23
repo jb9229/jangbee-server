@@ -134,4 +134,34 @@ public class WorkService {
 
         return false;
     }
+
+    public boolean cancelSelectedFirm(Long workId) {
+        Work work = repository.findOne(workId);
+
+        if (work != null) {
+            String accountId = work.getMatchedAccId();
+            work.setWorkState(WorkState.OPEN);
+            work.setMatchedAccId(null);
+            work.setSelectNoticeTime(null);
+
+            applicantRepository.deleteByWorkIdAndAccountId(work.getId(), work.getMatchedAccId());
+            repository.saveAndFlush(work);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean updateWork(WorkDto.Update update) {
+        Work work = repository.findOne(update.getWorkId());
+
+        if (work != null) {
+            work.setPhoneNumber(update.getPhoneNumber());
+            work.setDetailRequest(update.getDetailRequest());
+
+            repository.saveAndFlush(work);
+            return true;
+        }
+        return false;
+    }
 }

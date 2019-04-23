@@ -2,7 +2,6 @@ package com.jangbee.work;
 
 import com.google.firebase.database.*;
 import com.jangbee.accounts.AccountDto;
-import com.jangbee.ad.AdDto;
 import com.jangbee.common.JBBadRequestException;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
@@ -21,7 +20,6 @@ import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 /**
@@ -48,9 +46,9 @@ public class WorkController {
     private ModelMapper modelMapper;
 
     @RequestMapping(value="work", method = RequestMethod.POST)
-    public ResponseEntity create(@RequestBody @Valid WorkDto.Create create, BindingResult result) {
+    public ResponseEntity create(@RequestBody @Valid WorkDto.Create create, BindingResult bindingResult) {
 
-        if(result.hasErrors()){
+        if(bindingResult.hasErrors()){
             throw new JBBadRequestException();
         }
 
@@ -87,7 +85,19 @@ public class WorkController {
         }
 
 
-        return new ResponseEntity<>(modelMapper.map(work, WorkDto.Response.class), HttpStatus.OK);
+        return new ResponseEntity<>(modelMapper.map(work, WorkDto.FirmResponse.class), HttpStatus.OK);
+    }
+
+    @RequestMapping(value="work", method = RequestMethod.PUT)
+    public ResponseEntity create(@RequestBody @Valid WorkDto.Update update, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            throw new JBBadRequestException();
+        }
+
+        boolean result = service.updateWork(update);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @RequestMapping(value="works/firm/open", method = RequestMethod.GET)
@@ -95,9 +105,9 @@ public class WorkController {
         List<Work> works = service.getOpenFirmWorkList(equipment, accountId);
         List<Long> applicantWorkIdList = service.getApplicantWorkIdList(accountId);
 
-        List<WorkDto.Response> content = works.parallelStream()
+        List<WorkDto.FirmResponse> content = works.parallelStream()
                 .map(work -> {
-                    WorkDto.Response res = modelMapper.map(work , WorkDto.Response.class);
+                    WorkDto.FirmResponse res = modelMapper.map(work , WorkDto.FirmResponse.class);
                     if(applicantWorkIdList.contains(res.getId())){res.setApplied(true);}
                     return res;
                 })
@@ -110,8 +120,8 @@ public class WorkController {
     public ResponseEntity getMatchedFirmWorkList(@RequestParam String equipment, @RequestParam String accountId) {
         List<Work> works = service.getMatchedFirmWorkList(equipment, accountId);
 
-        List<WorkDto.Response> content = works.parallelStream()
-                .map(work -> modelMapper.map(work , WorkDto.Response.class))
+        List<WorkDto.FirmMatchedResponse> content = works.parallelStream()
+                .map(work -> modelMapper.map(work , WorkDto.FirmMatchedResponse.class))
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(content, HttpStatus.OK);
@@ -125,7 +135,7 @@ public class WorkController {
 
         Work work = service.applyWork(apply);
 
-        WorkDto.Response content = modelMapper.map(work , WorkDto.Response.class);
+        WorkDto.FirmResponse content = modelMapper.map(work , WorkDto.FirmResponse.class);
 
         return new ResponseEntity<>(content, HttpStatus.OK);
     }
@@ -163,16 +173,24 @@ public class WorkController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @RequestMapping(value="works/client/select/cancel", method = RequestMethod.PUT)
+    public ResponseEntity cancelSelectWork(@RequestParam Long workId) {
+
+        boolean result = service.cancelSelectedFirm(workId);
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @RequestMapping(value="works/client/open", method = RequestMethod.GET)
     public ResponseEntity getOpenClientWorkList(@RequestParam String accountId) {
         List<Work> works = service.getOpenClientWorkList(accountId);
 
-        List<WorkDto.Response> content = works.parallelStream()
+        List<WorkDto.ClientResponse> content = works.parallelStream()
                 .map(work -> {
-                    WorkDto.Response res = modelMapper.map(work , WorkDto.Response.class);
+                    WorkDto.ClientResponse res = modelMapper.map(work , WorkDto.ClientResponse.class);
                     Long applicantCount = service.getApplicantCount(work.getId());
                     res.setApplicantCount(applicantCount);
-                    res.setOverAcceptTime(res.isOverAcceptTime());
+                    res.setOverAcceptTime(WorkDto.isOverAcceptTime(res.getWorkState(), res.getSelectNoticeTime()));
                     return res;
                 })
                 .collect(Collectors.toList());
@@ -184,9 +202,9 @@ public class WorkController {
     public ResponseEntity getMatchedClientWorkList(@RequestParam String accountId) {
         List<Work> works = service.getMatchedClientWorkList(accountId);
 
-        List<WorkDto.Response> content = works.parallelStream()
+        List<WorkDto.ClientResponse> content = works.parallelStream()
                 .map(work -> {
-                    WorkDto.Response res = modelMapper.map(work , WorkDto.Response.class);
+                    WorkDto.ClientResponse res = modelMapper.map(work , WorkDto.ClientResponse.class);
 
                     if(firmEvaluService.getFirmEvaluByWorkId(work.getId()) != null){
                         res.setFirmEstimated(true);
