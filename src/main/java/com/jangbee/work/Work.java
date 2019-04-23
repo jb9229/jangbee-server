@@ -22,6 +22,7 @@ public class Work {
     private String addressDetail;
     @Temporal(TemporalType.DATE)
     private Date startDate;
+    @Temporal(TemporalType.DATE)
     private Date endDate;
     private float period;
     private String detailRequest;
@@ -44,5 +45,12 @@ public class Work {
         endDate.setTime(startDate.getTime() + periodTime);
 
         setEndDate(endDate);
+    }
+
+    public String getPeriodStr() {
+        if (period == 0.3){ return "오전"; }
+        if (period == 0.8){ return "오전"; }
+
+        return period+"일";
     }
 }

@@ -24,8 +24,8 @@ public class ExpoNotificationServiceTest {
     @Test
     public void sendSingle() throws Exception {
         String token = "ExponentPushToken[7ClYvcCbF-fuDCUEnus-u9]";
-        String title = "Spring Test";
-        String body = "Is it sueccess?";
+        String title = "Multi line Test";
+        String body = "Is it sueccess? \n seconde line";
         expoNotificationService.sendSingle(token, title, body, ExpoNotiData.NOTI_OBAT_DISCARD);
     }
 

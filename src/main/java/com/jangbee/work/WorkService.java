@@ -1,14 +1,21 @@
 package com.jangbee.work;
 
+import com.google.firebase.database.*;
+import com.jangbee.accounts.AccountDto;
 import com.jangbee.common.JangbeeNoticeService;
 import com.jangbee.expo.ExpoNotiData;
+import com.jangbee.expo.ExpoNotificationService;
+import com.jangbee.firm.Firm;
+import com.jangbee.firm.FirmService;
 import com.jangbee.utils.GeoUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,12 +24,17 @@ import java.util.List;
  */
 @Service
 public class WorkService {
+    @Autowired private FirmService firmService;
+
     @Autowired
     private ModelMapper modelMapper;
     @Autowired private WorkRepository repository;
     @Autowired private WorkApplicantRepository applicantRepository;
     @Autowired
     JangbeeNoticeService jangbeeNoticeService;
+
+    @Autowired
+    ExpoNotificationService expoNotificationService;
 
     public Work create(WorkDto.Create create) {
         String accountId = create.getAccountId();
@@ -33,7 +45,36 @@ public class WorkService {
         newWork.calEndDate();
         newWork.setWorkState(WorkState.OPEN);
 
-        return repository.save(newWork);
+        Work regWork =  repository.save(newWork);
+
+        if(regWork != null){
+            // notice to those euqipment
+            List<Firm> equiFirmList =  firmService.findEuipFirm(regWork.getEquipment());
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users/");
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List tokenList = new ArrayList();
+
+                    for(Firm firm: equiFirmList){
+                        DataSnapshot dSnapshot  = dataSnapshot.child(firm.getAccountId());
+                        AccountDto.FirebaseUser user = dSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
+                        tokenList.add(user.getExpoPushToken());
+                    }
+
+
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    expoNotificationService.sendMulti(tokenList, "[ "+regWork.getEquipment()+" ] 일감 올라옴", "#배차기간: "+regWork.getStartDate()+" ~ "+regWork.getEndDate()+"("+regWork.getPeriodStr()+")\n#배차장소: "+regWork.getAddress(), ExpoNotiData.NOTI_WORK_REGISTER);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
+
+        return regWork;
     }
 
     public List<Work> getOpenFirmWorkList(String equipment, String accountId) {
