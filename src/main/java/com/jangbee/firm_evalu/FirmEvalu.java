@@ -19,6 +19,7 @@ public class FirmEvalu {
     private Long workId;
     private String accountId;
     private String firmAccountId;
+    private String phoneNumber;
     private byte rating;
     private String comment;
 }

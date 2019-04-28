@@ -32,6 +32,8 @@ public class FirmDto {
         private String blog;
         private String homepage;
         private String sns;
+        private Byte rating;
+        private int ratingCnt;
     }
     @Data
     public static class ListResponse {
@@ -60,6 +62,8 @@ public class FirmDto {
 //        private String blog;
 //        private String homepage;
 //        private String sns;
+        private Byte rating;
+        private int ratingCnt;
     }
     @Data
     public static class Create{
