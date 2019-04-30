@@ -39,7 +39,7 @@ public class FirmDto {
     public static class ListResponse {
         public ListResponse() {
         }
-        public ListResponse(String accountId, String fname, String phoneNumber, String equiListStr, String address, String introduction, String thumbnail, Long distance) {
+        public ListResponse(String accountId, String fname, String phoneNumber, String equiListStr, String address, String introduction, String thumbnail, Long distance, Byte rating, Integer ratingCnt) {
             this.accountId = accountId;
             this.fname = fname;
             this.phoneNumber = phoneNumber;
@@ -48,6 +48,8 @@ public class FirmDto {
             this.introduction = introduction;
             this.thumbnail = thumbnail;
             this.distance = distance;
+            this.rating = rating;
+            this.ratingCnt = ratingCnt;
         }
         private String accountId;
         private String fname;

@@ -40,7 +40,7 @@ public class Work {
         if(startDate == null){return;}
 
         long periodDate = (long)(period < 1 ? 0 : period-1);
-        long periodTime = periodDate * 24 * 60* 1000;
+        long periodTime = periodDate * 24 * 60 * 60 * 1000;
         Date endDate = new Date();
         endDate.setTime(startDate.getTime() + periodTime);
 

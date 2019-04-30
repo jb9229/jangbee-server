@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.OptionalDouble;
 
@@ -42,6 +43,7 @@ public class FirmEvaluService {
             newEvalu.setAccountId(work.getAccountId());
             newEvalu.setFirmAccountId(firmAccountId);
             newEvalu.setPhoneNumber(work.getPhoneNumber());
+            newEvalu.setRegiDate(new Date());
 
             FirmEvalu savedEvalu =  repository.save(newEvalu);
 
@@ -68,5 +70,9 @@ public class FirmEvaluService {
         }
 
         return null;
+    }
+
+    public List<FirmEvalu> getByAccountId(String accountId) {
+        return repository.findByFirmAccountId(accountId);
     }
 }

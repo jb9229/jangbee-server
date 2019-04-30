@@ -14,4 +14,6 @@ public interface FirmEvaluRepository extends JpaRepository<FirmEvalu, Long> {
 
     @Query(value="SELECT fe.rating FROM FirmEvalu fe WHERE fe.firmAccountId = :firmAccountId")
     List<Byte> getRateByFirmAccountId(@Param("firmAccountId") String firmAccountId);
+
+    List<FirmEvalu> findByFirmAccountId(String firmAccountId);
 }
