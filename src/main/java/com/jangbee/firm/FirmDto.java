@@ -34,12 +34,13 @@ public class FirmDto {
         private String sns;
         private Byte rating;
         private int ratingCnt;
+        private String modelYear;
     }
     @Data
     public static class ListResponse {
         public ListResponse() {
         }
-        public ListResponse(String accountId, String fname, String phoneNumber, String equiListStr, String address, String introduction, String thumbnail, Long distance, Byte rating, Integer ratingCnt) {
+        public ListResponse(String accountId, String fname, String phoneNumber, String equiListStr, String address, String introduction, String thumbnail, Long distance, Byte rating, Integer ratingCnt, String modelYear) {
             this.accountId = accountId;
             this.fname = fname;
             this.phoneNumber = phoneNumber;
@@ -50,6 +51,7 @@ public class FirmDto {
             this.distance = distance;
             this.rating = rating;
             this.ratingCnt = ratingCnt;
+            this.modelYear = modelYear;
         }
         private String accountId;
         private String fname;
@@ -66,6 +68,7 @@ public class FirmDto {
 //        private String sns;
         private Byte rating;
         private int ratingCnt;
+        private String modelYear;
     }
     @Data
     public static class Create{
@@ -82,6 +85,10 @@ public class FirmDto {
         @NotBlank
         @Size(max=200)
         private String equiListStr;
+
+        @NotBlank
+        @Size(max=5)
+        private String modelYear;
 
         @NotBlank
         @Size(max=100)
@@ -150,6 +157,10 @@ public class FirmDto {
         @NotBlank
         @Size(max=200)
         private String equiListStr;
+
+        @NotBlank
+        @Size(max=5)
+        private String modelYear;
 
         @NotBlank
         @Size(max=100)

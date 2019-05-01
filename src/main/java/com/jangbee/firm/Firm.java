@@ -26,11 +26,12 @@ import com.vividsolutions.jts.geom.Point;
                                 @ColumnResult(name="distance", type=Long.class),
                                 @ColumnResult(name="rating", type=Byte.class),
                                 @ColumnResult(name="rating_cnt", type=Integer.class),
+                                @ColumnResult(name="model_year"),
                         }
                 )
         }
 )
-@org.hibernate.annotations.NamedNativeQuery(name="Firm.getNearFirm", query = "SELECT account_id, fname, phone_number, thumbnail, introduction, address, equi_list_str, ST_DISTANCE_SPHERE(POINT(?2, ?3), location) AS distance, rating, rating_cnt FROM firm WHERE equi_list_str like ?1 ORDER BY distance LIMIT ?4, ?5 ", resultSetMapping="groupDetailsMapping")
+@org.hibernate.annotations.NamedNativeQuery(name="Firm.getNearFirm", query = "SELECT account_id, fname, phone_number, thumbnail, introduction, address, equi_list_str, ST_DISTANCE_SPHERE(POINT(?2, ?3), location) AS distance, rating, rating_cnt, model_year FROM firm WHERE equi_list_str like ?1 ORDER BY distance LIMIT ?4, ?5 ", resultSetMapping="groupDetailsMapping")
 public class Firm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,4 +58,5 @@ public class Firm {
     private String sns;
     private Byte rating;
     private int ratingCnt;
+    private String modelYear;
 }

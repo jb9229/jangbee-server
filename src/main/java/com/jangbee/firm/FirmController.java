@@ -1,6 +1,7 @@
 package com.jangbee.firm;
 
 import com.google.common.collect.Lists;
+import com.jangbee.common.JBBadRequestException;
 import com.jangbee.common.JBErrorResponse;
 import com.jangbee.local.EquiLocalDto;
 import com.jangbee.local.EquiLocalService;
@@ -102,7 +103,7 @@ public class FirmController {
     public ResponseEntity update(@RequestBody @Valid FirmDto.Update updateDto, BindingResult result) throws ParseException {
 
         if(result.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new JBBadRequestException();
         }
 
         Firm firm     =   service.getByAccountId(updateDto.getAccountId());
