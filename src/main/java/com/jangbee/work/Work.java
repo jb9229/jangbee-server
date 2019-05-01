@@ -49,8 +49,8 @@ public class Work {
 
     public String getPeriodStr() {
         if (period == 0.3){ return "오전"; }
-        if (period == 0.8){ return "오전"; }
+        if (period == 0.8){ return "오후"; }
 
-        return period+"일";
+        return (int)period+"일";
     }
 }

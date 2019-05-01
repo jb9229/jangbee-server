@@ -65,7 +65,7 @@ public class WorkService {
 
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    expoNotificationService.sendMulti(tokenList, "[ "+regWork.getEquipment()+" ] 일감 올라옴", "#배차기간: "+regWork.getStartDate()+" ~ "+regWork.getEndDate()+"("+regWork.getPeriodStr()+")\n#배차장소: "+regWork.getAddress(), ExpoNotiData.NOTI_WORK_REGISTER);
+                    expoNotificationService.sendMulti(tokenList, "[ "+regWork.getEquipment()+" ] 일감 올라옴", "#배차기간:\n"+"  "+dateFormat.format(regWork.getStartDate())+" ~ "+dateFormat.format(regWork.getEndDate())+"("+regWork.getPeriodStr()+")\n\n#배차장소:\n"+"  "+regWork.getAddress(), ExpoNotiData.NOTI_WORK_REGISTER);
                 }
 
                 @Override
