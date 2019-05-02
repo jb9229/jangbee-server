@@ -48,8 +48,8 @@ public class Work {
     }
 
     public String getPeriodStr() {
-        if (period == 0.3){ return "오전"; }
-        if (period == 0.8){ return "오후"; }
+        if (Float.compare(period, (float)0.3) == 0){ return "오전"; }
+        if (Float.compare(period, (float)0.8) == 0){ return "오후"; }
 
         return (int)period+"일";
     }

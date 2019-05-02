@@ -24,6 +24,7 @@ import java.util.List;
  */
 @Service
 public class WorkService {
+    public static final long CLIENT_WORK_WAITHOUR = 2;
     @Autowired private FirmService firmService;
 
     @Autowired
@@ -135,8 +136,8 @@ public class WorkService {
 
             repository.saveAndFlush(work);
 
-            LocalDateTime afterThreeHour = LocalDateTime.now();
-            afterThreeHour.plusHours(3);
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime afterThreeHour = now.plusHours(CLIENT_WORK_WAITHOUR);
             jangbeeNoticeService.noticeCommonMSG(select.getAccountId(), "배차 요청함", "지원하신 일감에 배차가 요청되었습니다, 수락/거절해 주세요(무응답시, "+afterThreeHour.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))+" 이후로 취소될 수 있음)", ExpoNotiData.NOTI_WORK_SELECTED);
             return true;
         }
@@ -181,11 +182,12 @@ public class WorkService {
 
         if (work != null) {
             String accountId = work.getMatchedAccId();
+
             work.setWorkState(WorkState.OPEN);
             work.setMatchedAccId(null);
             work.setSelectNoticeTime(null);
 
-            applicantRepository.deleteByWorkIdAndAccountId(work.getId(), work.getMatchedAccId());
+            applicantRepository.deleteByWorkIdAndAccountId(work.getId(), accountId);
             repository.saveAndFlush(work);
             return true;
         }
