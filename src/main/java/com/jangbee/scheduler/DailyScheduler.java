@@ -155,9 +155,7 @@ public class DailyScheduler {
         }
 
         //Change Working -> Close
-        Calendar beforeOneDay = Calendar.getInstance();
-        beforeOneDay.add(Calendar.DAY_OF_MONTH, -1);
-        List<Work> endWorkList = workRepository.getOvertimeWorkingWorkList(beforeOneDay.getTime(), WorkState.WORKING);
+        List<Work> endWorkList = workRepository.getOvertimeWorkingWorkList(new Date(), WorkState.WORKING);
         for (Work work : endWorkList){
             work.setWorkState(WorkState.CLOSED);
             workRepository.saveAndFlush(work);
@@ -166,10 +164,10 @@ public class DailyScheduler {
         }
 
         //Delete After 2 Month works
-        Calendar beforeTwoMonth = Calendar.getInstance();
-        beforeTwoMonth.add(Calendar.MONTH, -2);
+        Calendar beforeOneMonth = Calendar.getInstance();
+        beforeOneMonth.add(Calendar.MONTH, -1);
 
-        List<Work> overWork = workRepository.getOverTwoMonthWorkList(beforeTwoMonth.getTime(), WorkState.CLOSED);
+        List<Work> overWork = workRepository.getOverOneMonthWorkList(beforeOneMonth.getTime(), WorkState.CLOSED);
         workRepository.delete(overWork);
 
     }

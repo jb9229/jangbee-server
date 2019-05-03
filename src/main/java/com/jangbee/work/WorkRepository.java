@@ -31,11 +31,11 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     @Query(value="UPDATE Work w SET w.applyNoticeTime = :date WHERE w.id = :workId")
     void updateApplyNoticeTime(@Param("date") Date date, @Param("workId") Long workId);
 
-    @Query(value="SELECT w FROM Work w WHERE w.startDate < :nowDate and w.workState < :workState")
+    @Query(value="SELECT w FROM Work w WHERE w.startDate <= :nowDate and w.workState < :workState")
     List<Work> getOvertimeOpenWorkList(@Param("nowDate") Date nowDate, @Param("workState") WorkState workState);
 
-    @Query(value="SELECT w FROM Work w WHERE w.startDate < :beforeTwoMonth and w.workState = :workState")
-    List<Work> getOverTwoMonthWorkList(@Param("beforeTwoMonth") Date beforeTwoMonth, @Param("workState") WorkState workState);
+    @Query(value="SELECT w FROM Work w WHERE w.endDate < :beforeTwoMonth and w.workState = :workState")
+    List<Work> getOverOneMonthWorkList(@Param("beforeTwoMonth") Date beforeTwoMonth, @Param("workState") WorkState workState);
 
     @Query(value="SELECT w FROM Work w WHERE w.endDate < :beforeOneDate and w.workState = :workState") // Working State
     List<Work> getOvertimeWorkingWorkList(@Param("beforeOneDate") Date beforeOneDate, @Param("workState")WorkState workState);
