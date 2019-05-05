@@ -60,7 +60,7 @@ public class FirmEvaluService {
                         .average();
 
                 firm.setRating(average.isPresent() ? (byte)average.getAsDouble() : 0);
-                firm.setRatingCnt(firm.getRating()+1);
+                firm.setRatingCnt(firm.getRatingCnt()+1);
 
                 firmRepository.saveAndFlush(firm);
             }
