@@ -55,6 +55,7 @@ public class ExpoNotificationService {
         JSONObject data = new JSONObject();
         data.put("title", title);
         data.put("body", body);
+        data.put("channelId", "chat-messages");
         if(notiType != null) { data.put("notice", notiType); }
         try {
             pushJSON.put("to", token);

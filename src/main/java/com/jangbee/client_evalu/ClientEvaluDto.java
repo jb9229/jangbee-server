@@ -30,7 +30,7 @@ public class ClientEvaluDto {
     public static class Create {
         @NotNull
         private String accountId;
-        @NotBlank
+
         @Size(max = 8)
         private String cliName;
         @Size(max = 12)
@@ -56,7 +56,6 @@ public class ClientEvaluDto {
         @NotNull
         private Long id;
 
-        @NotBlank
         @Size(max = 8)
         private String cliName;
 
