@@ -43,8 +43,8 @@ public class ClientEvaluController {
     }
 
     @RequestMapping(value="evaluations", method = RequestMethod.GET)
-    public ResponseEntity getAll(@RequestParam String accountId) {
-        List<ClientEvalu> list =   service.getClientEvaluAll();
+    public ResponseEntity getMyEvalu(@RequestParam String accountId) {
+        List<ClientEvalu> list =   service.getMyClientEvalu(accountId);
 
         List<Long> evaluLikeList = service.listEvaluLike(accountId);
 

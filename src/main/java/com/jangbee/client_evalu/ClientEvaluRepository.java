@@ -12,8 +12,8 @@ import java.util.List;
 
 public interface ClientEvaluRepository extends JpaRepository<ClientEvalu, Long> {
     boolean existsByTelNumber(String telNumber);
-    @Query(value="SELECT * FROM client_evalu WHERE update_date between :startDate and :endDate", nativeQuery = true)
-    List<ClientEvalu> getNewest(@Param("startDate") String startDate, @Param("endDate") String endDate);
+    @Query(value="SELECT cEvalu FROM ClientEvalu cEvalu WHERE cEvalu.accountId = :accountId")
+    List<ClientEvalu> getNewest(@Param("accountId") String accountId);
 
     List<ClientEvalu> findByCliNameLike(String cliName);
 

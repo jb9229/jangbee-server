@@ -58,12 +58,8 @@ public class ClientEvaluService {
         return null;
     }
 
-    public List<ClientEvalu> getClientEvaluAll() {
-        Calendar beforMonthsCal = Calendar.getInstance();
-        beforMonthsCal.add(Calendar.MONTH, -2);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        return repository.getNewest(dateFormat.format(beforMonthsCal.getTime()), dateFormat.format(new Date()));
+    public List<ClientEvalu> getMyClientEvalu(String accountId) {
+        return repository.getNewest(accountId);
     }
 
     public boolean existTelNumer(String telNumber) {
@@ -82,6 +78,10 @@ public class ClientEvaluService {
         updateCE.setTelNumber2(update.getTelNumber2());
         updateCE.setTelNumber3(update.getTelNumber3());
         updateCE.setFirmNumber(update.getFirmNumber());
+        updateCE.setEquipment(update.getEquipment());
+        updateCE.setLocal(update.getLocal());
+        updateCE.setAmount(update.getAmount());
+        updateCE.setRegiTelNumber(update.getRegiTelNumber());
         updateCE.setReason(update.getReason());
 
         return repository.saveAndFlush(updateCE);
