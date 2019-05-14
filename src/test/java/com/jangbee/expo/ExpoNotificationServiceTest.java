@@ -23,11 +23,11 @@ public class ExpoNotificationServiceTest {
 
     @Test
     public void sendSingle() throws Exception {
-//        String token = "ExponentPushToken[7ClYvcCbF-fuDCUEnus-u9]";
-        String token = "ExponentPushToken[eimkOmCQ17ppKOc90zAJoI]"; //채범
+        String token = "ExponentPushToken[7ClYvcCbF-fuDCUEnus-u9]";
+//        String token = "ExponentPushToken[eimkOmCQ17ppKOc90zAJoI]"; //채범
         String title = "Multi line Test";
         String body = "Is it sueccess? \n seconde line";
-        String channelId = "chat-messages"; // android 8.0 later
+        String channelId = "channelId"; // android 8.0 later
         expoNotificationService.sendSingle(token, title, body, ExpoNotiData.NOTI_OBAT_DISCARD);
     }
 
