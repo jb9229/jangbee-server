@@ -61,6 +61,8 @@ public class ExpoNotificationService {
             pushJSON.put("title", title);
             pushJSON.put("body", body);
             pushJSON.put("channelId", "jbcall-messages");
+            pushJSON.put("sound", "default");
+            pushJSON.put("badge", 1);
             pushJSON.put("data", data.toString());
         } catch (JSONException e) {
             e.printStackTrace();

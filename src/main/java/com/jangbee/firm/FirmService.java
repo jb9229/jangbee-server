@@ -66,6 +66,7 @@ public class FirmService {
 
     public Firm update(Firm firm, FirmDto.Update update) throws ParseException {
         firm.setFname(update.getFname());
+        firm.setPhoneNumber(update.getPhoneNumber());
         firm.setEquiListStr(update.getEquiListStr());
         firm.setAddress(update.getAddress());
         firm.setAddressDetail(update.getAddressDetail());

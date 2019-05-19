@@ -60,8 +60,12 @@ public class WorkService {
 
                     for(Firm firm: equiFirmList){
                         DataSnapshot dSnapshot  = dataSnapshot.child(firm.getAccountId());
-                        AccountDto.FirebaseUser user = dSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
-                        tokenList.add(user.getExpoPushToken());
+                        try {
+                            AccountDto.FirebaseUser user = dSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
+                            tokenList.add(user.getExpoPushToken());
+                        }catch (DatabaseException e) {
+                            e.printStackTrace();
+                        }
                     }
 
 
@@ -71,6 +75,7 @@ public class WorkService {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
+                    System.out.println(databaseError.getMessage());
                 }
             });
         }
