@@ -16,6 +16,7 @@ public class Work {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accountId;
+    private boolean firmRegister;
     private String equipment;
     private String phoneNumber;
     private String address;

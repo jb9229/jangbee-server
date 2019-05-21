@@ -13,6 +13,7 @@ import com.jangbee.common.EmailSender;
 import com.jangbee.common.JangbeeNoticeService;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
+import com.jangbee.openbank.OpenbankService;
 import com.jangbee.work.Work;
 import com.jangbee.work.WorkRepository;
 import com.jangbee.work.WorkState;
@@ -35,6 +36,9 @@ import java.util.List;
 public class DailyScheduler {
     @Autowired
     AdService adservice;
+    @Autowired
+    OpenbankService openBankService;
+
     @Autowired
     EmailSender emailSender;
     @Autowired
@@ -92,7 +96,7 @@ public class DailyScheduler {
                     Calendar afterTenDayCal = Calendar.getInstance();
                     afterTenDayCal.add(Calendar.DAY_OF_MONTH, 10);
                     if(ad.getNextWithdrawDate().before(ad.getEndDate()) && now.after(ad.getNextWithdrawDate())){
-                        boolean result = adservice.obTransferWithdraw(user.getObAccessToken(), ad.getFintechUseNum(), ad.getPrice());
+                        boolean result = openBankService.withdraw(user.getObAccessToken(), ad.getFintechUseNum(), "장비 콜 광고비", ad.getPrice());
 
                         if(!result){
                             Calendar afterSevenCal = Calendar.getInstance();

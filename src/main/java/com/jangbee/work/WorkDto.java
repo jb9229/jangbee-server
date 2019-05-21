@@ -26,6 +26,7 @@ public class WorkDto {
     @Data
     public static class FirmResponse {
         private Long id;
+        private boolean firmRegister;
         private String equipment;
         private String address;
         private String addressDetail;
@@ -47,6 +48,7 @@ public class WorkDto {
     @Data
     public static class ClientResponse {
         private Long id;
+        private boolean firmRegister;
         private String equipment;
         private String phoneNumber;
         private String address;
@@ -69,6 +71,7 @@ public class WorkDto {
     @Data
     public static class FirmMatchedResponse {
         private Long id;
+        private boolean firmRegister;
         private String equipment;
         private String phoneNumber;
         private String address;
@@ -92,6 +95,8 @@ public class WorkDto {
     public static class Create{
         @NotBlank
         private String accountId;
+
+        private boolean firmRegister;
 
         @NotBlank
         @Size(max=25)
@@ -145,6 +150,8 @@ public class WorkDto {
         private long workId;
         @NotBlank
         private String accountId;
+        private String authToken;
+        private String fintechUseNum;
     }
 
     @Data

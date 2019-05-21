@@ -1,6 +1,7 @@
 package com.jangbee.ad;
 
 import com.jangbee.common.JBBadRequestException;
+import com.jangbee.openbank.OpenbankService;
 import org.json.JSONException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class AdController {
 
     @Autowired AdService service;
     @Autowired
+    OpenbankService openBankService;
+    @Autowired
     private ModelMapper modelMapper;
 
     @RequestMapping(value="ad", method = RequestMethod.POST)
@@ -36,7 +39,7 @@ public class AdController {
         }
 
         //TODO 첫달 이체 진행
-        if(!service.obTransferWithdraw(create.getObAccessToken(), create.getFintechUseNum(), create.getPrice())){throw new AdPriceWithdrawException();}
+        if(!openBankService.withdraw(create.getObAccessToken(), create.getFintechUseNum(), "장비 콜 광고비", create.getPrice())){throw new AdPriceWithdrawException();}
 
         Ad newAd  =   service.createAd(create);
 

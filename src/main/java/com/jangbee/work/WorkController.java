@@ -1,12 +1,15 @@
 package com.jangbee.work;
 
 import com.jangbee.common.JBBadRequestException;
+import com.jangbee.common.JBUnexpectException;
 import com.jangbee.firm.Firm;
 import com.jangbee.firm.FirmDto;
 import com.jangbee.firm.FirmService;
 import com.jangbee.firm_evalu.FirmEvaluService;
+import com.jangbee.openbank.OpenbankService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -27,6 +30,8 @@ public class WorkController {
 
     @Autowired private FirmService firmService;
 
+    @Autowired OpenbankService openBankService;
+
     @Autowired
     private WorkApplicantService workApplicantService;
 
@@ -35,6 +40,9 @@ public class WorkController {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Value( "${openbank.matching_fee.firm_work}" )
+    private Integer firmWorkMatchingFee;
 
     @RequestMapping(value="work", method = RequestMethod.POST)
     public ResponseEntity create(@RequestBody @Valid WorkDto.Create create, BindingResult bindingResult) {
@@ -95,6 +103,28 @@ public class WorkController {
         }
 
         Work work = service.applyWork(apply);
+
+        WorkDto.FirmResponse content = modelMapper.map(work , WorkDto.FirmResponse.class);
+
+        return new ResponseEntity<>(content, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="firm_works/firm/apply", method = RequestMethod.PUT)
+    public ResponseEntity applyFirmWork(@RequestBody @Valid WorkDto.Apply apply, BindingResult result) {
+        if(result.hasErrors()){
+            throw new JBBadRequestException();
+        }
+
+        WorkApplicant newWorkApplicant = service.applyFirmWork(apply);
+        boolean withdrawResult = openBankService.withdraw(apply.getAuthToken(), apply.getFintechUseNum(), "장비콜 일감매칭비", firmWorkMatchingFee);
+        if(!withdrawResult){
+            service.cancelApplyFirmWork(newWorkApplicant);
+           throw new FirmworkWithdrawException();
+        }
+
+        Work work = service.acceptFirmWork(newWorkApplicant);
+
+        if (work == null) {throw new JBUnexpectException();}
 
         WorkDto.FirmResponse content = modelMapper.map(work , WorkDto.FirmResponse.class);
 

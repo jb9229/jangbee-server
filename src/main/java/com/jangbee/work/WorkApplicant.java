@@ -18,4 +18,5 @@ public class WorkApplicant {
     private Long id;
     private Long workId;
     private String accountId;
+    private Long firmWorkId;
 }

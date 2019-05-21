@@ -2,6 +2,7 @@ package com.jangbee.work;
 
 import com.google.firebase.database.*;
 import com.jangbee.accounts.AccountDto;
+import com.jangbee.ad.AdWithdrawHistRepository;
 import com.jangbee.common.JangbeeNoticeService;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
@@ -31,6 +32,8 @@ public class WorkService {
     private ModelMapper modelMapper;
     @Autowired private WorkRepository repository;
     @Autowired private WorkApplicantRepository applicantRepository;
+    @Autowired
+    AdWithdrawHistRepository withHistRepository;
     @Autowired
     JangbeeNoticeService jangbeeNoticeService;
 
@@ -123,6 +126,23 @@ public class WorkService {
         return work;
     }
 
+    public WorkApplicant applyFirmWork(WorkDto.Apply apply) {
+        WorkApplicant applicant = new WorkApplicant();
+        applicant.setWorkId(apply.getWorkId());
+        applicant.setAccountId(apply.getAccountId());
+        applicant.setFirmWorkId(apply.getWorkId());
+
+        try {
+            return applicantRepository.save(applicant);
+        }catch (org.springframework.dao.DataIntegrityViolationException e){
+            throw new DuplicateWorkApplicantException();
+        }
+    }
+
+    public void cancelApplyFirmWork(WorkApplicant applicant) {
+        applicantRepository.delete(applicant.getId());
+    }
+
     public List<Long> getApplicantWorkIdList(String accountId) {
         return applicantRepository.getWorkIdList(accountId);
     }
@@ -162,6 +182,21 @@ public class WorkService {
         }
 
         return false;
+    }
+
+
+    public Work acceptFirmWork(WorkApplicant newAppicant) {
+        Work work = repository.findOne(newAppicant.getWorkId());
+
+        if (work != null && work.getWorkState().equals(WorkState.OPEN)) {
+            work.setWorkState(WorkState.MATCHED);
+            work.setMatchedAccId(newAppicant.getAccountId());
+            repository.saveAndFlush(work);
+
+            jangbeeNoticeService.noticeCommonMSG(work.getAccountId(), "배차됨", "매칭된 장비업체로부터 곧 전화가 갈 것입니다", ExpoNotiData.NOTI_WORK_ACCEPT);
+            return work;
+        }
+        return null;
     }
 
     public boolean abandonWork(WorkDto.Abandon abandon) {
