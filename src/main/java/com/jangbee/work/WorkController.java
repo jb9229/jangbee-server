@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,9 @@ public class WorkController {
 
     @Autowired
     FirmEvaluService firmEvaluService;
+
+    @Autowired
+    WorkRepository workRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -78,6 +82,7 @@ public class WorkController {
                 .map(work -> {
                     WorkDto.FirmResponse res = modelMapper.map(work , WorkDto.FirmResponse.class);
                     if(applicantWorkIdList.contains(res.getId())){res.setApplied(true);}
+                    if(work.isFirmRegister() && new Date().after(work.getGuaranteeTime())) {res.setGuarTimeExpire(true);}
                     return res;
                 })
                 .collect(Collectors.toList());
@@ -114,6 +119,13 @@ public class WorkController {
         if(result.hasErrors()){
             throw new JBBadRequestException();
         }
+        Work work = workRepository.findOne(apply.getWorkId());
+        if (work == null) {throw new JBUnexpectException();}
+        Date guaranteeTime = work.getGuaranteeTime();
+
+        if (new Date().after(guaranteeTime)) {
+            throw new FirmWorkExpireException();
+        }
 
         WorkApplicant newWorkApplicant = service.applyFirmWork(apply);
         boolean withdrawResult = openBankService.withdraw(apply.getAuthToken(), apply.getFintechUseNum(), "장비콜 일감매칭비", firmWorkMatchingFee);
@@ -122,9 +134,7 @@ public class WorkController {
            throw new FirmworkWithdrawException();
         }
 
-        Work work = service.acceptFirmWork(newWorkApplicant);
-
-        if (work == null) {throw new JBUnexpectException();}
+        service.acceptFirmWork(work, newWorkApplicant);
 
         WorkDto.FirmResponse content = modelMapper.map(work , WorkDto.FirmResponse.class);
 
@@ -182,6 +192,7 @@ public class WorkController {
                     Long applicantCount = service.getApplicantCount(work.getId());
                     res.setApplicantCount(applicantCount);
                     res.setOverAcceptTime(WorkDto.isOverAcceptTime(res.getWorkState(), res.getSelectNoticeTime()));
+                    if(work.isFirmRegister() && new Date().after(work.getGuaranteeTime())) {res.setGuarTimeExpire(true);}
                     return res;
                 })
                 .collect(Collectors.toList());

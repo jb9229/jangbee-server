@@ -43,6 +43,7 @@ public class WorkDto {
         private long applicantCount;
         private boolean firmEstimated;
         private boolean overAcceptTime;
+        private boolean guarTimeExpire;
     }
 
     @Data
@@ -66,6 +67,7 @@ public class WorkDto {
         private long applicantCount;
         private boolean firmEstimated;
         private boolean overAcceptTime;
+        private boolean guarTimeExpire;
     }
 
     @Data
@@ -118,6 +120,8 @@ public class WorkDto {
 
         @NotNull
         private Float period;
+
+        private Integer guaranteeTime;
 
         @NotNull
         @Size(max=500)

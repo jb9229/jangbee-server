@@ -36,6 +36,8 @@ public class Work {
     @Temporal(TemporalType.TIMESTAMP)
     private Date applyNoticeTime;
     private Date selectNoticeTime;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date guaranteeTime;
 
     public void calEndDate() {
         if(startDate == null){return;}

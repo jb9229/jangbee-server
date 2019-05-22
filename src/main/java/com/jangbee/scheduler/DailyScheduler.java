@@ -141,6 +141,7 @@ public class DailyScheduler {
 
         // Change Matched -> Working
         List<Work> workList = workRepository.getOvertimeOpenWorkList(new Date(), WorkState.WORKING);
+        List<Work> expiredFirmWorkList = workRepository.getExpireOpenFirmWorkList(new Date(), WorkState.OPEN);
 
         List<Work> deleteWork = new ArrayList();
         for(Work work : workList) {
@@ -149,6 +150,7 @@ public class DailyScheduler {
                 workRepository.saveAndFlush(work);
             }
 
+            // Delete Expire Open State Work
             if(work.getWorkState().equals(WorkState.OPEN) || work.getWorkState().equals(WorkState.SELECTED)){
                 deleteWork.add(work);
             }
@@ -156,6 +158,10 @@ public class DailyScheduler {
 
         if (!deleteWork.isEmpty()) {
            workRepository.delete(deleteWork);
+        }
+
+        if (expiredFirmWorkList != null && !expiredFirmWorkList.isEmpty()) {
+            workRepository.delete(expiredFirmWorkList);
         }
 
         //Change Working -> Close

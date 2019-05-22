@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +45,16 @@ public class WorkService {
         String accountId = create.getAccountId();
         create.setAccountId(null);
         Work newWork = this.modelMapper.map(create, Work.class);
+
+        // 차주일감의 최대보장시간 설정
+        if (create.isFirmRegister()) {
+            int guanteeTime = create.getGuaranteeTime();
+
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime guaranteeMinute = now.plusMinutes(guanteeTime);
+            newWork.setGuaranteeTime(Date.from(guaranteeMinute.atZone(ZoneId.systemDefault()).toInstant()));
+        }
+
         newWork.setAccountId(accountId);
         newWork.setAddressPoint(GeoUtils.getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
         newWork.calEndDate();
@@ -185,18 +196,14 @@ public class WorkService {
     }
 
 
-    public Work acceptFirmWork(WorkApplicant newAppicant) {
-        Work work = repository.findOne(newAppicant.getWorkId());
-
+    public void acceptFirmWork(Work work, WorkApplicant newAppicant) {
         if (work != null && work.getWorkState().equals(WorkState.OPEN)) {
             work.setWorkState(WorkState.MATCHED);
             work.setMatchedAccId(newAppicant.getAccountId());
             repository.saveAndFlush(work);
 
             jangbeeNoticeService.noticeCommonMSG(work.getAccountId(), "배차됨", "매칭된 장비업체로부터 곧 전화가 갈 것입니다", ExpoNotiData.NOTI_WORK_ACCEPT);
-            return work;
         }
-        return null;
     }
 
     public boolean abandonWork(WorkDto.Abandon abandon) {
