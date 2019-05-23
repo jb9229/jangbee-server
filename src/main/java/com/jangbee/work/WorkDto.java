@@ -156,6 +156,7 @@ public class WorkDto {
         private String accountId;
         private String authToken;
         private String fintechUseNum;
+        private boolean coupon;
     }
 
     @Data
@@ -173,6 +174,7 @@ public class WorkDto {
         private long workId;
         @NotBlank
         private String accountId;
+        private boolean coupon;
     }
 
     @Data

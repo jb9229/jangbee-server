@@ -11,6 +11,7 @@ import com.jangbee.ad.AdService;
 import com.jangbee.common.Email;
 import com.jangbee.common.EmailSender;
 import com.jangbee.common.JangbeeNoticeService;
+import com.jangbee.coupon.CouponService;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
 import com.jangbee.openbank.OpenbankService;
@@ -38,6 +39,8 @@ public class DailyScheduler {
     AdService adservice;
     @Autowired
     OpenbankService openBankService;
+    @Autowired
+    private CouponService couponService;
 
     @Autowired
     EmailSender emailSender;
@@ -146,6 +149,10 @@ public class DailyScheduler {
         List<Work> deleteWork = new ArrayList();
         for(Work work : workList) {
             if(work.getWorkState().equals(WorkState.MATCHED)){
+                // 차주일감 쿠폰지급
+                if (work.isFirmRegister()) {
+                    couponService.payFirmWorkCoupon(work.getAccountId());
+                }
                 work.setWorkState(WorkState.WORKING);
                 workRepository.saveAndFlush(work);
             }

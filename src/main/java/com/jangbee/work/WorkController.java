@@ -2,6 +2,9 @@ package com.jangbee.work;
 
 import com.jangbee.common.JBBadRequestException;
 import com.jangbee.common.JBUnexpectException;
+import com.jangbee.coupon.Coupon;
+import com.jangbee.coupon.CouponLackException;
+import com.jangbee.coupon.CouponService;
 import com.jangbee.firm.Firm;
 import com.jangbee.firm.FirmDto;
 import com.jangbee.firm.FirmService;
@@ -38,6 +41,8 @@ public class WorkController {
 
     @Autowired
     FirmEvaluService firmEvaluService;
+    @Autowired
+    CouponService couponService;
 
     @Autowired
     WorkRepository workRepository;
@@ -119,6 +124,15 @@ public class WorkController {
         if(result.hasErrors()){
             throw new JBBadRequestException();
         }
+
+        if (apply.isCoupon()){
+            Coupon c = couponService.getCoupon(apply.getAccountId());
+
+            if(c == null || c.getCpCount() < 2) {
+                throw new CouponLackException();
+            }
+        }
+
         Work work = workRepository.findOne(apply.getWorkId());
         if (work == null) {throw new JBUnexpectException();}
         Date guaranteeTime = work.getGuaranteeTime();
@@ -128,10 +142,15 @@ public class WorkController {
         }
 
         WorkApplicant newWorkApplicant = service.applyFirmWork(apply);
-        boolean withdrawResult = openBankService.withdraw(apply.getAuthToken(), apply.getFintechUseNum(), "장비콜 일감매칭비", firmWorkMatchingFee);
-        if(!withdrawResult){
-            service.cancelApplyFirmWork(newWorkApplicant);
-           throw new FirmworkWithdrawException();
+
+        if (apply.isCoupon()) {
+            couponService.useCoupon(apply.getAccountId(), 2);
+        } else {
+            boolean withdrawResult = openBankService.withdraw(apply.getAuthToken(), apply.getFintechUseNum(), "장비콜 일감매칭비", firmWorkMatchingFee);
+            if (!withdrawResult) {
+                service.cancelApplyFirmWork(newWorkApplicant);
+                throw new FirmworkWithdrawException();
+            }
         }
 
         service.acceptFirmWork(work, newWorkApplicant);
@@ -147,7 +166,19 @@ public class WorkController {
             throw new JBBadRequestException();
         }
 
+        if (accept.isCoupon()){
+            Coupon c = couponService.getCoupon(accept.getAccountId());
+
+            if(c == null || c.getCpCount() < 2) {
+                throw new CouponLackException();
+            }
+        }
+
         boolean result = service.acceptWork(accept);
+
+        if (accept.isCoupon()){
+            couponService.useCoupon(accept.getAccountId(), 2);
+        }
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
