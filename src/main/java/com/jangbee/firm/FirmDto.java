@@ -24,6 +24,8 @@ public class FirmDto {
         private String sigunguAddr;
         private Double addrLongitude;
         private Double addrLatitude;
+        private String workAlarmSido;
+        private String workAlarmSigungu;
         private String introduction;
         private String thumbnail;
         private String photo1;
@@ -58,14 +60,9 @@ public class FirmDto {
         private String phoneNumber;
         private String equiListStr;
         private String address;
-//        private String sidoAddr;
-//        private String sigunguAddr;
         private Long distance;
         private String introduction;
         private String thumbnail;
-//        private String blog;
-//        private String homepage;
-//        private String sns;
         private Byte rating;
         private int ratingCnt;
         private String modelYear;
@@ -110,6 +107,12 @@ public class FirmDto {
 
         @NotNull
         private Double addrLatitude;
+
+        @Size(max=100)
+        private String workAlarmSido;
+
+        @Size(max=300)
+        private String workAlarmSigungu;
 
         @Size(max=1000)
         private String introduction;
@@ -182,6 +185,12 @@ public class FirmDto {
 
         @NotNull
         private Double addrLatitude;
+
+        @Size(max=100)
+        private String workAlarmSido;
+
+        @Size(max=300)
+        private String workAlarmSigungu;
 
         @Size(max=1000)
         private String introduction;

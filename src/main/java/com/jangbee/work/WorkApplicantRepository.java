@@ -22,5 +22,9 @@ public interface WorkApplicantRepository extends JpaRepository<WorkApplicant, Lo
 
     @Modifying
     @Transactional
-    long deleteByWorkIdAndAccountId(long workId, String accountId);
+    Long deleteByWorkIdAndAccountId(long workId, String accountId);
+
+    @Modifying
+    @Transactional
+    Long deleteByAccountId(String accountId);
 }

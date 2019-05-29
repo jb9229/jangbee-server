@@ -64,7 +64,7 @@ public class WorkService {
 
         if(regWork != null){
             // notice to those euqipment
-            List<Firm> equiFirmList =  firmService.findEuipFirm(regWork.getEquipment());
+            List<Firm> avaiFirmList =  firmService.findAvaWorkFirm(regWork.getEquipment(), regWork.getSidoAddr(), regWork.getSigunguAddr());
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users/");
 
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -72,7 +72,7 @@ public class WorkService {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     List tokenList = new ArrayList();
 
-                    for(Firm firm: equiFirmList){
+                    for(Firm firm: avaiFirmList){
                         DataSnapshot dSnapshot  = dataSnapshot.child(firm.getAccountId());
                         try {
                             AccountDto.FirebaseUser user = dSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
@@ -84,7 +84,15 @@ public class WorkService {
 
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    expoNotificationService.sendMulti(tokenList, "[ "+regWork.getEquipment()+" ] 일감 올라옴", "#배차기간:\n"+"  "+dateFormat.format(regWork.getStartDate())+" ~ "+dateFormat.format(regWork.getEndDate())+"("+regWork.getPeriodStr()+")\n\n#배차장소:\n"+"  "+regWork.getAddress(), ExpoNotiData.NOTI_WORK_REGISTER);
+                    String limitStr = "";
+                    if (regWork.getModelYearLimit() != null ) {limitStr = regWork.getModelYearLimit()+"년식이상, ";}
+                    if (regWork.getLicenseLimit() != null && !regWork.getLicenseLimit().isEmpty()) {limitStr += regWork.getLicenseLimit()+"필요, ";}
+                    if (regWork.getNondestLimit() != null) {limitStr += "비파괴검사 "+regWork.getNondestLimit()+"개월이하, ";}
+                    if (regWork.getCareerLimit() != null) {limitStr += regWork.getCareerLimit()+"경력이상, ";}
+
+                    if (!limitStr.isEmpty()) {limitStr = "["+limitStr.substring(0, limitStr.length()-2)+"]\n\n";}
+
+                    expoNotificationService.sendMulti(tokenList, "[ "+regWork.getEquipment()+" ] 일감 올라옴", limitStr+"#배차기간:\n"+"  "+dateFormat.format(regWork.getStartDate())+" ~ "+dateFormat.format(regWork.getEndDate())+"("+regWork.getPeriodStr()+")\n\n#배차장소:\n"+"  "+regWork.getSidoAddr()+" "+regWork.getSigunguAddr(), ExpoNotiData.NOTI_WORK_REGISTER);
                 }
 
                 @Override
@@ -253,5 +261,11 @@ public class WorkService {
             return true;
         }
         return false;
+    }
+
+    public void deleteByAccountId(String accountId) {
+        applicantRepository.deleteByAccountId(accountId);
+
+        repository.deleteByAccountId(accountId);
     }
 }

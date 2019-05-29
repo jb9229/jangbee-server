@@ -48,6 +48,8 @@ public class Firm {
     private Point location;
     private Double addrLongitude;
     private Double addrLatitude;
+    private String workAlarmSido;
+    private String workAlarmSigungu;
     private String introduction;
     private String thumbnail;
     private String photo1;

@@ -67,7 +67,7 @@ public class WorkController {
     }
 
     @RequestMapping(value="work", method = RequestMethod.PUT)
-    public ResponseEntity create(@RequestBody @Valid WorkDto.Update update, BindingResult bindingResult) {
+    public ResponseEntity update(@RequestBody @Valid WorkDto.Update update, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             throw new JBBadRequestException();

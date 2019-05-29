@@ -142,4 +142,8 @@ public class ClientEvaluService {
         return likeRepository.existsByAccountIdAndEvaluId(accountId, evaluId);
     }
 
+    public void deleteByAccountId(String accountId) {
+        likeRepository.deleteByAccountId(accountId);
+        repository.deleteByAccountId(accountId);
+    }
 }

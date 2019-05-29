@@ -21,12 +21,18 @@ public class Work {
     private String phoneNumber;
     private String address;
     private String addressDetail;
+    private String sidoAddr;
+    private String sigunguAddr;
     @Temporal(TemporalType.DATE)
     private Date startDate;
     @Temporal(TemporalType.DATE)
     private Date endDate;
     private float period;
     private String detailRequest;
+    private Short modelYearLimit;
+    private String licenseLimit;
+    private Short nondestLimit;
+    private Short careerLimit;
     @Column(name = "address_point", columnDefinition = "POINT")
     private Point addressPoint;
     private Double addrLongitude;

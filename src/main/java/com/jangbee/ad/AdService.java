@@ -196,4 +196,10 @@ public class AdService {
 
         return true;
     }
+
+    public void deleteByAccountId(String accountId) {
+        List<Ad> adList = repository.getByAccountId(accountId);
+
+        adList.parallelStream().forEach(ad -> terminateAd(ad.getId()));
+    }
 }

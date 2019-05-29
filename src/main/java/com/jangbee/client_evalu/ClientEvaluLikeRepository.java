@@ -18,6 +18,7 @@ public interface ClientEvaluLikeRepository extends JpaRepository<ClientEvaluLike
     @Query(value="SELECT id FROM client_evalu_like e_like WHERE e_like.account_id = :accountId", nativeQuery = true)
     List<Long> findByAccountId(@Param("accountId") String accountId);
 
+    @Modifying
     @Transactional
     Long deleteByAccountId(String accountId);
 

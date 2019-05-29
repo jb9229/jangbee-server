@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface WorkRepository extends JpaRepository<Work, Long> {
 
-    @Query(value="SELECT w FROM Work w WHERE w.equipment = :equipment and (w.workState = :openWorkState or (w.workState = :selectWorkState and w.matchedAccId = :accountId)) ORDER BY w.workState desc")
+    @Query(value="SELECT w FROM Work w WHERE (w.firmRegister = true AND w.accountId = :accountId) OR (w.equipment = :equipment and (w.workState = :openWorkState or (w.workState = :selectWorkState and w.matchedAccId = :accountId))) ORDER BY w.workState desc")
     List<Work> getOpenFirmWorkList(@Param("equipment")String equipment, @Param("accountId")String accountId, @Param("openWorkState") WorkState openWorkState, @Param("selectWorkState") WorkState selectWorkState);
 
     @Query(value="SELECT w FROM Work w WHERE w.accountId = :accountId and w.workState <= :workState ORDER BY w.workState desc")
@@ -42,4 +42,8 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
 
     @Query(value="SELECT w FROM Work w WHERE w.endDate < :beforeOneDate and w.workState = :workState") // Working State
     List<Work> getOvertimeWorkingWorkList(@Param("beforeOneDate") Date beforeOneDate, @Param("workState")WorkState workState);
+
+    @Modifying
+    @Transactional
+    Long deleteByAccountId(String accountId);
 }

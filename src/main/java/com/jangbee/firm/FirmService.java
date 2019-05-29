@@ -72,6 +72,8 @@ public class FirmService {
         firm.setAddressDetail(update.getAddressDetail());
         firm.setSidoAddr(update.getSidoAddr());
         firm.setSigunguAddr(update.getSigunguAddr());
+        firm.setWorkAlarmSido(update.getWorkAlarmSido());
+        firm.setWorkAlarmSigungu(update.getWorkAlarmSigungu());
         firm.setIntroduction(update.getIntroduction());
         firm.setThumbnail(update.getThumbnail());
         firm.setPhoto1(update.getPhoto1());
@@ -103,11 +105,18 @@ public class FirmService {
         return list;
     }
 
-    public List<Firm> findEuipFirm(String equipment) {
-        return repository.findByEquiListStr(equipment);
+    public List<Firm> findAvaWorkFirm(String equipment, String sido, String sigungu) {
+        String likeSidoStr = "%"+sido+"%";
+        String likeSigunguStr = "%"+sido+" "+sigungu+"%";
+
+        return repository.findAvaWorkFirm(equipment, likeSidoStr, likeSigunguStr);
     }
 
     public List<Firm> getFirmList(List<String> appliAccountIdList) {
         return repository.findByAccountIdIn(appliAccountIdList);
+    }
+
+    public Long deleteFirm(String accountId) {
+        return repository.deleteByAccountId(accountId);
     }
 }

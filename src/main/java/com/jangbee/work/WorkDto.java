@@ -35,6 +35,10 @@ public class WorkDto {
         private Date selectNoticeTime;
         private float period;
         private String detailRequest;
+        private Short modelYearLimit;
+        private String licenseLimit;
+        private Short nondestLimit;
+        private Short careerLimit;
         private Double addrLongitude;
         private Double addrLatitude;
         private String matchedAccId;
@@ -59,6 +63,10 @@ public class WorkDto {
         private Date selectNoticeTime;
         private float period;
         private String detailRequest;
+        private Short modelYearLimit;
+        private String licenseLimit;
+        private Short nondestLimit;
+        private Short careerLimit;
         private Double addrLongitude;
         private Double addrLatitude;
         private String matchedAccId;
@@ -83,6 +91,10 @@ public class WorkDto {
         private Date selectNoticeTime;
         private float period;
         private String detailRequest;
+        private Short modelYearLimit;
+        private String licenseLimit;
+        private Short nondestLimit;
+        private Short careerLimit;
         private Double addrLongitude;
         private Double addrLatitude;
         private String matchedAccId;
@@ -115,6 +127,14 @@ public class WorkDto {
         @Size(max=45)
         private String addressDetail;
 
+        @NotBlank
+        @Size(max=45)
+        private String sidoAddr;
+
+        @NotBlank
+        @Size(max=45)
+        private String sigunguAddr;
+
         @NotNull
         private Date startDate;
 
@@ -126,6 +146,11 @@ public class WorkDto {
         @NotNull
         @Size(max=500)
         private String detailRequest;
+
+        private Short modelYearLimit;
+        private String licenseLimit;
+        private Short nondestLimit;
+        private Short careerLimit;
 
         @NotNull
         private Double addrLongitude;
