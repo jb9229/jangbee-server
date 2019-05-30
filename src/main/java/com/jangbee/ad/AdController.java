@@ -34,7 +34,7 @@ public class AdController {
         }
 
         //TODO 첫달 이체 진행
-        if(!openBankService.withdraw(create.getObAccessToken(), create.getFintechUseNum(), "장비 콜 광고비", create.getPrice())){throw new AdPriceWithdrawException();}
+//        if(!openBankService.withdraw(create.getObAccessToken(), create.getFintechUseNum(), "장비 콜 광고비", create.getPrice())){throw new AdPriceWithdrawException();}
 
         Ad newAd  =   service.createAd(create);
 

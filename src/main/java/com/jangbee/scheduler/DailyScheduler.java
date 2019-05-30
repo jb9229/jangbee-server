@@ -151,7 +151,7 @@ public class DailyScheduler {
             if(work.getWorkState().equals(WorkState.MATCHED)){
                 // 차주일감 쿠폰지급
                 if (work.isFirmRegister()) {
-                    couponService.payFirmWorkCoupon(work.getAccountId());
+                    couponService.payFirmWorkCoupon(work.getAccountId(), 2);
                 }
                 work.setWorkState(WorkState.WORKING);
                 workRepository.saveAndFlush(work);

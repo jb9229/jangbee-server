@@ -12,18 +12,18 @@ public class CouponService {
     @Autowired
     CouponRepository repository;
 
-    public void payFirmWorkCoupon(String accountId) {
+    public void payFirmWorkCoupon(String accountId, int addCnt) {
         Coupon coupon =  repository.findByAccountId(accountId);
 
         if(coupon == null){
             coupon = new Coupon();
-            coupon.setCpCount(1);
+            coupon.setCpCount(addCnt);
             coupon.setAccountId(accountId);
             coupon.setType(CouponType.FirmWorkCoupon);
 
             repository.save(coupon);
         } else {
-            coupon.setCpCount(coupon.getCpCount()+1);
+            coupon.setCpCount(coupon.getCpCount()+addCnt);
 
             repository.saveAndFlush(coupon);
         }

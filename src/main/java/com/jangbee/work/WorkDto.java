@@ -26,10 +26,13 @@ public class WorkDto {
     @Data
     public static class FirmResponse {
         private Long id;
+        private String accountId;
         private boolean firmRegister;
         private String equipment;
         private String address;
         private String addressDetail;
+        private String sidoAddr;
+        private String sigunguAddr;
         private Date startDate;
         private Date endDate;
         private Date selectNoticeTime;

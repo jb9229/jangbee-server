@@ -1,5 +1,6 @@
 package com.jangbee.firm;
 
+import com.jangbee.coupon.CouponService;
 import com.jangbee.local.EquiLocalService;
 import com.jangbee.local.EquipmentLocal;
 import com.jangbee.utils.GeoUtils;
@@ -28,6 +29,8 @@ public class FirmService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired private EquiLocalService equiLocalService;
+    @Autowired
+    CouponService couponService;
 
 
     @Autowired
@@ -37,15 +40,15 @@ public class FirmService {
         // i don't know why Numberformatexception occure
         String accountId = create.getAccountId();
         create.setAccountId("");
-        Firm firm = this.modelMapper.map(create, Firm.class);
-        firm.setAccountId(accountId);
+        Firm newFirm = this.modelMapper.map(create, Firm.class);
+        newFirm.setAccountId(accountId);
 
-        firm.setLocation(GeoUtils.getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
+        newFirm.setLocation(GeoUtils.getPoint(create.getAddrLatitude(), create.getAddrLongitude()));
 
         // Save Equipment Local for search
-        String[] equipmentArr = firm.getEquiListStr().split(EQUIPMENT_STR_SEPERATOR);
-        String sido = firm.getSidoAddr();
-        String sigungu = firm.getSigunguAddr();
+        String[] equipmentArr = newFirm.getEquiListStr().split(EQUIPMENT_STR_SEPERATOR);
+        String sido = newFirm.getSidoAddr();
+        String sigungu = newFirm.getSigunguAddr();
         for(String equipment: equipmentArr){
             if(equipment.isEmpty()){continue;}
             EquipmentLocal eLocal = equiLocalService.get(equipment, sido, sigungu);
@@ -53,8 +56,10 @@ public class FirmService {
             if(eLocal == null){equiLocalService.create(equipment, sido, sigungu);}
         }
 
+        // 베타버전 프로모션
+        couponService.payFirmWorkCoupon(newFirm.getAccountId(), 100);
 
-        return this.repository.save(firm);
+        return this.repository.save(newFirm);
     }
 
     public Firm getByAccountId(String accountId) {

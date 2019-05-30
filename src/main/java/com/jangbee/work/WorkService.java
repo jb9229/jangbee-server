@@ -88,7 +88,7 @@ public class WorkService {
                     if (regWork.getModelYearLimit() != null ) {limitStr = regWork.getModelYearLimit()+"년식이상, ";}
                     if (regWork.getLicenseLimit() != null && !regWork.getLicenseLimit().isEmpty()) {limitStr += regWork.getLicenseLimit()+"필요, ";}
                     if (regWork.getNondestLimit() != null) {limitStr += "비파괴검사 "+regWork.getNondestLimit()+"개월이하, ";}
-                    if (regWork.getCareerLimit() != null) {limitStr += regWork.getCareerLimit()+"경력이상, ";}
+                    if (regWork.getCareerLimit() != null) {limitStr += regWork.getCareerLimit()+"년경력이상, ";}
 
                     if (!limitStr.isEmpty()) {limitStr = "["+limitStr.substring(0, limitStr.length()-2)+"]\n\n";}
 
