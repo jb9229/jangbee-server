@@ -87,7 +87,7 @@ public class WorkController {
                 .map(work -> {
                     WorkDto.FirmResponse res = modelMapper.map(work , WorkDto.FirmResponse.class);
                     if(applicantWorkIdList.contains(res.getId())){res.setApplied(true);}
-                    if(work.isFirmRegister() && new Date().after(work.getGuaranteeTime())) {res.setGuarTimeExpire(true);}
+                    if(work.isFirmRegister() && work.getGuaranteeTime() != null && new Date().after(work.getGuaranteeTime())) {res.setGuarTimeExpire(true);}
                     return res;
                 })
                 .collect(Collectors.toList());

@@ -73,7 +73,7 @@ public class FirmController {
     }
 
     @RequestMapping(value="/firm/local", method = RequestMethod.GET)
-    public ResponseEntity getLoclFirm(@RequestParam  String equipment, @RequestParam String sido, @RequestParam String gungu, Pageable pageable){
+        public ResponseEntity getLoclFirm(@RequestParam  String equipment, @RequestParam String sido, @RequestParam(required = false) String gungu, Pageable pageable){
 
         Page<Firm> page =      service.findLocalFirm(equipment, sido, gungu, pageable);
 

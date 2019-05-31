@@ -76,7 +76,9 @@ public class WorkService {
                         DataSnapshot dSnapshot  = dataSnapshot.child(firm.getAccountId());
                         try {
                             AccountDto.FirebaseUser user = dSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
-                            tokenList.add(user.getExpoPushToken());
+                            if(user.getExpoPushToken() != null) {
+                                tokenList.add(user.getExpoPushToken());
+                            }
                         }catch (DatabaseException e) {
                             e.printStackTrace();
                         }

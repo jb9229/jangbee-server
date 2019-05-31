@@ -105,7 +105,12 @@ public class FirmService {
     public Page<Firm> findLocalFirm(String equipment, String sidoAddr, String sigunguAddr, Pageable pageable) {
         String likeEquipmentStr = "%"+equipment+"%";
 
-        Page<Firm> list = repository.findByEquiListStrLikeAndSidoAddrAndSigunguAddr(likeEquipmentStr, sidoAddr, sigunguAddr, pageable);
+        Page<Firm> list;
+        if (sigunguAddr != null) {
+            list = repository.findByEquiListStrLikeAndSidoAddrAndSigunguAddr(likeEquipmentStr, sidoAddr, sigunguAddr, pageable);
+        } else {
+            list = repository.findByEquiListStrLikeAndSidoAddr(likeEquipmentStr, sidoAddr, pageable);
+        }
 
         return list;
     }
