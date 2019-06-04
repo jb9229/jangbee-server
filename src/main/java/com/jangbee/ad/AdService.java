@@ -70,11 +70,10 @@ public class AdService {
         nowCal.add(Calendar.MONTH, create.getForMonths());
         newAd.setEndDate(nowCal.getTime());
 
-        if(create.getForMonths() > 1){
-            Calendar nextWithdrawCal = Calendar.getInstance();
-            nextWithdrawCal.add(Calendar.MONTH, 1);
-            newAd.setNextWithdrawDate(nextWithdrawCal.getTime());
-        }
+        Calendar nextWithdrawCal = Calendar.getInstance();
+        nextWithdrawCal.add(Calendar.MONTH, 1);
+        newAd.setNextWithdrawDate(nextWithdrawCal.getTime());
+
 
         return repository.save(newAd);
     }

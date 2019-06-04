@@ -73,6 +73,7 @@ public class FirmService {
         firm.setFname(update.getFname());
         firm.setPhoneNumber(update.getPhoneNumber());
         firm.setEquiListStr(update.getEquiListStr());
+        firm.setModelYear(update.getModelYear());
         firm.setAddress(update.getAddress());
         firm.setAddressDetail(update.getAddressDetail());
         firm.setSidoAddr(update.getSidoAddr());
