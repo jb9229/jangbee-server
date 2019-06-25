@@ -1,5 +1,7 @@
 package com.jangbee.firm;
 
+import com.jangbee.stat.StatDto;
+import org.hibernate.annotations.NamedNativeQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,6 +31,8 @@ public interface FirmRepository extends JpaRepository<Firm, Long> {
 
     @Transactional
     Long deleteByAccountId(String accountId);
+
+    List<StatDto.FirmLocalCount> getFirmLocalCount(String equipmentStr);
 }
 
 // \n-- #pageable\n

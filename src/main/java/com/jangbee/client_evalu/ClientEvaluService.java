@@ -2,6 +2,8 @@ package com.jangbee.client_evalu;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -58,8 +60,16 @@ public class ClientEvaluService {
         return null;
     }
 
-    public List<ClientEvalu> getMyClientEvalu(String accountId) {
-        return repository.getNewest(accountId);
+    public Page<ClientEvalu> getMyClientEvalu(String accountId, Pageable pageable) {
+        return repository.getMy(accountId, pageable);
+    }
+
+    public Page<ClientEvalu> getNewestClientEvalu(Pageable pageable) {
+        Calendar beforMonthsCal = Calendar.getInstance();
+        beforMonthsCal.add(Calendar.MONTH, -2);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        return repository.getNewest(beforMonthsCal.getTime(), new Date(), pageable);
     }
 
     public boolean existTelNumer(String telNumber) {

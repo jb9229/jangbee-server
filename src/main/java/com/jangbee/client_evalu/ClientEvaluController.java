@@ -4,6 +4,9 @@ import com.jangbee.common.JBBadRequestException;
 import com.vividsolutions.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,12 +46,17 @@ public class ClientEvaluController {
     }
 
     @RequestMapping(value="evaluations", method = RequestMethod.GET)
-    public ResponseEntity getMyEvalu(@RequestParam String accountId) {
-        List<ClientEvalu> list =   service.getMyClientEvalu(accountId);
+    public ResponseEntity getMyEvalu(@RequestParam String accountId, @RequestParam boolean mine, Pageable pageable) {
+        Page<ClientEvalu> page;
+        if (mine) {
+            page =   service.getMyClientEvalu(accountId, pageable);
+        }else {
+            page =   service.getNewestClientEvalu(pageable);
+        }
 
         List<Long> evaluLikeList = service.listEvaluLike(accountId);
 
-        List<ClientEvaluDto.Response> responseList = list.parallelStream()
+        List<ClientEvaluDto.Response> responseList = page.getContent().parallelStream()
                 .map(newEvalu -> {
                     ClientEvaluDto.Response response = modelMapper.map(newEvalu, ClientEvaluDto.Response.class);
                     if(evaluLikeList.contains(newEvalu.getId())){
@@ -59,7 +67,9 @@ public class ClientEvaluController {
                 })
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(responseList, HttpStatus.OK);
+        PageImpl<ClientEvaluDto.Response> pageResult    =   new PageImpl<>(responseList, pageable, page.getTotalElements());
+
+        return new ResponseEntity<>(pageResult, HttpStatus.OK);
     }
 
     @RequestMapping(value="evaluation", method = RequestMethod.GET)
