@@ -22,7 +22,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/")
 public class FirmStatController {
-    static String[] STAT_LOCAL_LIST = {"서울", "부산", "경기", "인천", "세종특별자치시", "대전", "광주", "대구", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주특별자치도"};
+    static String[] STAT_LOCAL_LIST = {"서울", "부산", "경기", "인천", "세종특별자치시", "대전", "광주", "대구", "울산", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주특별자치도"};
     static Map<String, String[]> STAT_EQUI_MODEL_LIST = new HashMap();
     @PostConstruct
     public void init() {
