@@ -49,7 +49,7 @@ classes={
 })
 
 @NamedNativeQueries({
-        @NamedNativeQuery(name="Firm.getNearFirm", query = "SELECT account_id, fname, phone_number, thumbnail, introduction, address, equi_list_str, ST_DISTANCE_SPHERE(POINT(?2, ?3), location) AS distance, rating, rating_cnt, model_year FROM firm WHERE equi_list_str like ?1 ORDER BY distance LIMIT ?4, ?5 ", resultSetMapping="groupDetailsMapping"),
+        @NamedNativeQuery(name="Firm.getNearFirm", query = "SELECT account_id, fname, phone_number, thumbnail, introduction, address, equi_list_str, ST_DISTANCE_SPHERE(POINT(?2, ?3), location) AS distance, rating, rating_cnt, model_year FROM firm WHERE equi_list_str = ?1 ORDER BY distance LIMIT ?4, ?5 ", resultSetMapping="groupDetailsMapping"),
         @NamedNativeQuery(name="Firm.getFirmLocalCount", query="SELECT f.sido_addr as sido, count(f.sido_addr) as firm_count, SUBSTRING_INDEX(f.equi_list_str, ' ', 1) as model FROM firm f where f.equi_list_str like ?1 group by f.sido_addr, f.equi_list_str order by f.equi_list_str, f.sido_addr", resultSetMapping="firmLocalCountMapping")
 })
 public class Firm {

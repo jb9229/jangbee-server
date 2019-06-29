@@ -64,25 +64,13 @@ public class WorkService {
 
         if(regWork != null){
             // notice to those euqipment
-            List<Firm> avaiFirmList =  firmService.findAvaWorkFirm(regWork.getEquipment(), regWork.getSidoAddr(), regWork.getSigunguAddr());
+            List<Firm> noticeFirmList =  firmService.findAvaWorkFirm(regWork.getEquipment(), regWork.getSidoAddr(), regWork.getSigunguAddr());
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users/");
 
             reference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    List tokenList = new ArrayList();
-
-                    for(Firm firm: avaiFirmList){
-                        DataSnapshot dSnapshot  = dataSnapshot.child(firm.getAccountId());
-                        try {
-                            AccountDto.FirebaseUser user = dSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
-                            if(user.getExpoPushToken() != null) {
-                                tokenList.add(user.getExpoPushToken());
-                            }
-                        }catch (DatabaseException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    List tokenList = expoNotificationService.getTokenList(noticeFirmList, dataSnapshot);
 
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

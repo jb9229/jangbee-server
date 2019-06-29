@@ -16,16 +16,19 @@ import java.util.List;
  */
 public interface FirmRepository extends JpaRepository<Firm, Long> {
     Firm findByAccountId(String accountId);
-    long countByEquiListStrLike(String equipment);
+    long countByEquiListStr(String equipment);
 
     List<FirmDto.ListResponse> getNearFirm(String equipment, Double longitude, Double latitude, int startRowNum, int size);
 
-    Page<Firm> findByEquiListStrLikeAndSidoAddrAndSigunguAddr(String likeEquipmentStr, String sidoAddr, String sigunguAddr, Pageable pageable);
+    Page<Firm> findByEquiListStrAndSidoAddrAndSigunguAddr(String equipmentStr, String sidoAddr, String sigunguAddr, Pageable pageable);
 
-    Page<Firm> findByEquiListStrLikeAndSidoAddr(String likeEquipmentStr, String sidoAddr, Pageable pageable);
+    Page<Firm> findByEquiListStrAndSidoAddr(String equipmentStr, String sidoAddr, Pageable pageable);
 
     @Query(value="SELECT f FROM Firm f WHERE f.equiListStr = :equiListStr and (f.workAlarmSido LIKE :workAlarmSido OR f.workAlarmSigungu LIKE :workAlarmSigungu)")
     List<Firm> findAvaWorkFirm(@Param("equiListStr") String equiListStr, @Param("workAlarmSido") String workAlarmSido, @Param("workAlarmSigungu") String workAlarmSigungu);
+
+    @Query(value="SELECT f FROM Firm f WHERE f.workAlarmSido LIKE :workAlarmSido OR f.workAlarmSigungu LIKE :workAlarmSigungu")
+    List<Firm> findCEvaluAlarmFirm(@Param("workAlarmSido") String workAlarmSido, @Param("workAlarmSigungu") String workAlarmSigungu);
 
     List<Firm> findByAccountIdIn(List<String> appliAccountIdList);
 

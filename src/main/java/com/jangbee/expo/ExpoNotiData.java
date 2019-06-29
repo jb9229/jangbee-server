@@ -16,4 +16,5 @@ public class ExpoNotiData {
     public static String NOTI_WORK_ACCEPT = "NOTI_WORK_ACCEPT";
     public static String NOTI_WORK_ABANDON = "NOTI_WORK_ABANDON";
     public static String NOTI_WORK_CLOSED = "NOTI_WORK_CLOSED";
+    public static String NOTI_CEVALU_REGISTER = "NOTI_CEVALU_REGISTER";
 }

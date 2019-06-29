@@ -1,5 +1,12 @@
 package com.jangbee.client_evalu;
 
+import com.google.firebase.database.*;
+import com.jangbee.accounts.AccountDto;
+import com.jangbee.expo.ExpoNotiData;
+import com.jangbee.expo.ExpoNotificationService;
+import com.jangbee.firm.Firm;
+import com.jangbee.firm.FirmRepository;
+import com.jangbee.utils.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,8 +27,9 @@ public class ClientEvaluService {
 
     @Autowired private ClientEvaluRepository repository;
     @Autowired private ClientEvaluLikeRepository likeRepository;
+    @Autowired private FirmRepository firmRepository;
     @Autowired private ModelMapper modelMapper;
-    private List<ClientEvalu> clientEvaluAll;
+    @Autowired private ExpoNotificationService expoNotificationService;
 
     public ClientEvalu create(ClientEvaluDto.Create create) {
         String accountId = create.getAccountId();
@@ -31,6 +39,41 @@ public class ClientEvaluService {
         newEvaluation.setLikeCount(0);
         newEvaluation.setUnlikeCount(0);
         newEvaluation.setUpdateDate(new Date());
+
+        // Notice to firm
+        String local = create.getLocal();
+        if(local != null && !local.isEmpty()) {
+            String[] localArr = local.split(" ");
+            String sido =  "";
+            String sigungu =  "%"+local+"%";
+            if(localArr.length == 1){
+                sido =  "%"+localArr[0]+"%";
+                sigungu =  "";
+            }
+            List<Firm> noticeFirmList = firmRepository.findCEvaluAlarmFirm(sido, sigungu);
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users/");
+
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List tokenList = expoNotificationService.getTokenList(noticeFirmList, dataSnapshot);
+                    String localStr = "";
+                    String firmNameStr = "";
+                    String nameStr = "";
+
+                    if(newEvaluation.getLocal() != null && !newEvaluation.getLocal().isEmpty()){ localStr = "#지역: "+newEvaluation.getLocal()+"\n";}
+                    if(newEvaluation.getFirmName() != null && !newEvaluation.getFirmName().isEmpty()){ firmNameStr = "#업체명: "+newEvaluation.getFirmName()+"\n";}
+                    if(newEvaluation.getCliName() != null && !newEvaluation.getCliName().isEmpty()){ nameStr = "#고객명: "+newEvaluation.getCliName()+"\n";}
+                    expoNotificationService.sendMulti(tokenList, "[ " + StringUtils.getTelNumber(newEvaluation.getTelNumber()) + " ] 피해사례 올라옴", localStr+firmNameStr+nameStr+"#피해내용:\n" + "  " + newEvaluation.getReason(), ExpoNotiData.NOTI_CEVALU_REGISTER);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println(databaseError.getMessage());
+                }
+            });
+        }
 
         return repository.save(newEvaluation);
     }
