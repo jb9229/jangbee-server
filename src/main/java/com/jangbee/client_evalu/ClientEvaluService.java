@@ -44,13 +44,15 @@ public class ClientEvaluService {
         String local = create.getLocal();
         if(local != null && !local.isEmpty()) {
             String[] localArr = local.split(" ");
-            String sido =  "";
-            String sigungu =  "%"+local+"%";
+
+            List<Firm> noticeFirmList;
             if(localArr.length == 1){
-                sido =  "%"+localArr[0]+"%";
-                sigungu =  "";
+                String sido     =  "%"+localArr[0]+"%";
+                noticeFirmList  = firmRepository.findCEvaluAlarmSidoFirm(sido);
+            } else {
+                String sigungu =  "%"+local+"%";
+                noticeFirmList = firmRepository.findCEvaluAlarmSigunguFirm(sigungu);
             }
-            List<Firm> noticeFirmList = firmRepository.findCEvaluAlarmFirm(sido, sigungu);
 
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users/");
 
