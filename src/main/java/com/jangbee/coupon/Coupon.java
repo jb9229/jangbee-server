@@ -17,4 +17,5 @@ public class Coupon {
     @Enumerated(EnumType.ORDINAL)
     private CouponType type;
     private int cpCount;
+    private int availCashback;
 }

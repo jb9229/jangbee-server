@@ -17,4 +17,11 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     @Transactional
     @Query(value="UPDATE Coupon c SET c.cpCount = c.cpCount - :useCount WHERE c.accountId = :accountId and c.cpCount >= :useCount")
     Integer updateCouponCount(@Param("accountId")String accountId, @Param("useCount") int useCount);
+
+    @Query(value ="select c.availCashback from Coupon c where c.accountId = :accountId")
+    Integer findAvailCashback(@Param("accountId")String accountId);
+
+    @Modifying
+    @Query(value ="update Coupon c set c.availCashback = c.availCashback - :cashback where c.accountId = :accountId and c.availCashback >= :cashback")
+    Integer cashback(@Param("accountId")String accountId, @Param("cashback")int cashback);
 }

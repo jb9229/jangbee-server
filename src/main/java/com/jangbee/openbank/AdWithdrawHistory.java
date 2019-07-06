@@ -1,4 +1,4 @@
-package com.jangbee.ad;
+package com.jangbee.openbank;
 
 import lombok.Data;
 

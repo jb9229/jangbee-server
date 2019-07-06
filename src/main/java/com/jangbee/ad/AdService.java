@@ -3,10 +3,9 @@ package com.jangbee.ad;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ServerValue;
+import com.jangbee.openbank.AdWithdrawHistRepository;
 import com.jangbee.utils.RestTemplateUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.uid;
 
 /**
  * Created by test on 2019-02-14.
@@ -29,7 +24,8 @@ import static org.bouncycastle.asn1.x500.style.RFC4519Style.uid;
 @Service
 public class AdService {
     @Autowired AdRepository repository;
-    @Autowired AdWithdrawHistRepository withHistRepository;
+    @Autowired
+    AdWithdrawHistRepository withHistRepository;
     @Autowired private ModelMapper modelMapper;
     @Autowired
     RestTemplateUtils restTemplateUtils;

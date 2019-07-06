@@ -1,8 +1,7 @@
 package com.jangbee.work;
 
 import com.google.firebase.database.*;
-import com.jangbee.accounts.AccountDto;
-import com.jangbee.ad.AdWithdrawHistRepository;
+import com.jangbee.openbank.AdWithdrawHistRepository;
 import com.jangbee.common.JangbeeNoticeService;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
@@ -17,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

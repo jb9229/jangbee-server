@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by test on 2019-02-14.
@@ -91,6 +92,21 @@ public class AdDto {
     }
 
     @Data
+    public static class TransferDepositResponse {
+        private String rsp_code;    // "A0000"
+        private String rsp_message;    // "A0000"
+
+        private String wd_account_holder_name;    // "홍길동"
+        private String tran_amt;    // "A0000"
+        private String bank_name;    // "A0000"
+        private String account_alias; // 급여계좌
+        private String print_content;
+        private String bank_tran_id;  // "12345678901234567890"
+        private String api_tran_dtm;  // "20160310101921567"
+        private List<Deposit> res_list;
+    }
+
+    @Data
     public static class RefreshTokenResponse {
         private String rsp_code;    // "A0000"
         private String rsp_message;    // "A0000"
@@ -111,5 +127,20 @@ public class AdDto {
 
             return dateFormat.format(tokenExpDateCal.getTime());
         }
+    }
+
+    @Data
+    private static class Deposit{
+        private String bank_tran_id; // "12345678901234567890"
+        private String bank_tran_date; // "20160310"
+        private String bank_rsp_code; // "000"
+        private String bank_rsp_message; //"",
+        private String account_alias;  //"급여계좌"
+        private String bank_name; // 오픈은행
+        private String account_num_masked; // "000-1230000-***"
+        private String print_content; // 쇼핑몰환불",
+        private String account_holder_name; // "홍길동",
+        private String tran_amt; // "10000“
+
     }
 }
