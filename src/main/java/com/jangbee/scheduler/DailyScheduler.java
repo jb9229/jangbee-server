@@ -1,9 +1,6 @@
 package com.jangbee.scheduler;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 import com.jangbee.accounts.AccountDto;
 import com.jangbee.ad.Ad;
 import com.jangbee.ad.AdRepository;
@@ -14,6 +11,7 @@ import com.jangbee.common.JangbeeNoticeService;
 import com.jangbee.coupon.CouponService;
 import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
+import com.jangbee.openbank.OpenbankDto;
 import com.jangbee.openbank.OpenbankService;
 import com.jangbee.work.Work;
 import com.jangbee.work.WorkRepository;
@@ -25,10 +23,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * Created by test on 2019-03-08.
@@ -187,6 +187,51 @@ public class DailyScheduler {
         List<Work> overWork = workRepository.getOverOneMonthWorkList(beforeOneMonth.getTime(), WorkState.CLOSED);
         workRepository.delete(overWork);
 
+
+        // Open bank 이용기관 Access Token 재발급 체크
+        FirebaseDatabase.getInstance().getReference("openbank/oob").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                OpenbankDto.OobAccTokenInfo tokenInfo = dataSnapshot.getValue(OpenbankDto.OobAccTokenInfo.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
+
+                // Validation
+                if (tokenInfo != null && tokenInfo.getExp_date() != null) {
+                    SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date expDate = null;
+                    try {
+                        expDate = sdFormat.parse(tokenInfo.getExp_date());
+                    } catch (ParseException e) { e.printStackTrace();}
+
+                    if (expDate.after(new Date())) {return;}
+                }
+
+                OpenbankDto.OobAccTokenResponse tokenResponse = openBankService.requestOobToken();
+
+                if(tokenInfo != null) {
+                    Map<String, Object> update = new HashMap<String, Object>();
+                    update.put("/openbank/oob/access_token", tokenInfo.getAccess_token());
+                    update.put("/openbank/oob/token_type", tokenInfo.getToken_type());
+                    update.put("/openbank/oob/scope", tokenInfo.getScope());
+                    update.put("/openbank/oob/client_use_code", tokenInfo.getScope());
+
+                    LocalDateTime now = LocalDateTime.now();
+                    LocalDateTime expDate = now.plusDays(80);
+                    update.put("/openbank/oob/exp_date", expDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+                    FirebaseDatabase.getInstance().getReference().updateChildren(update, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            // TODO Event Driven Return
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                sendFailEmail("pen bank 이용기관 Access Token 재발급 오류", "");
+            }
+        });
     }
 
     private void sendWithdrawFailEmail(Ad ad) {
@@ -195,6 +240,20 @@ public class DailyScheduler {
         email.setReceiver(adminEmail);
         email.setSubject("["+ad.getAccountId()+"] 광고비 이체 실패");
         String eamilContents = "<p># 광고비 이체실패 정보</p> <p>db id: "+ad.getId()+"</P><p>전화번호: "+ad.getTelNumber()+"</p><p> 광고타이틀: "+ad.getTitle()+"</p><p> 광고서브타이틀: "+ad.getSubTitle()+"</p><p> 계좌Fintech Number: "+ad.getFintechUseNum()+"</p>";
+        email.setContent(eamilContents);
+        try {
+            emailSender.sendMail(email);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendFailEmail(String subject, String contents) {
+        Email email = new Email();
+        email.setSender(adminEmail);
+        email.setReceiver(adminEmail);
+        email.setSubject(subject);
+        String eamilContents = contents;
         email.setContent(eamilContents);
         try {
             emailSender.sendMail(email);
