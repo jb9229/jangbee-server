@@ -47,8 +47,8 @@ public class CouponController {
             throw new JBBadRequestException();
         }
 
-        boolean availCashback =   service.cashback(create);
+        boolean cashbackResult = service.cashback(create);
 
-        return new ResponseEntity<>(modelMapper.map(availCashback, CouponDto.Response.class), HttpStatus.OK);
+        return new ResponseEntity<>(cashbackResult, HttpStatus.OK);
     }
 }

@@ -2,6 +2,7 @@ package com.jangbee.openbank;
 
 import com.jangbee.ad.AdDto;
 import com.jangbee.utils.RestTemplateUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import org.springframework.util.MultiValueMap;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by test on 2019-05-21.
@@ -96,18 +97,21 @@ public class OpenbankService {
 
     public boolean diposit(String authToken, String fintechUseNum, String printContent, int tranAmt) {
         JSONObject userJSON = new JSONObject();
+
         JSONObject tranJSON = new JSONObject();
+        JSONArray tranArrJSON = new JSONArray();
         String WD_PASS_PHRASE = "NONE";
 
         userJSON.put("wd_pass_phrase", WD_PASS_PHRASE);
         userJSON.put("wd_print_content", printContent);
         userJSON.put("name_check_option", "off");
-        userJSON.put("req_cnt", '1');
-        userJSON.put("req_list", tranJSON);
-        tranJSON.put("tran_no", '1');
+        userJSON.put("req_cnt", "1");
+        tranJSON.put("tran_no", "1");
         tranJSON.put("fintech_use_num", fintechUseNum);
         tranJSON.put("print_content", printContent);
-        tranJSON.put("tran_amt", tranAmt);
+        tranJSON.put("tran_amt", ""+tranAmt);
+        tranArrJSON.put(tranJSON);
+        userJSON.put("req_list", tranArrJSON);
         LocalDateTime ldt = LocalDateTime.now();
         DateTimeFormatter formmat1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.KOREA);
         userJSON.put("tran_dtime", formmat1.format(ldt));

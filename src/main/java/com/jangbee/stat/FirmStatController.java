@@ -25,7 +25,7 @@ public class FirmStatController {
     static String[] STAT_LOCAL_LIST = {"서울", "부산", "경기", "인천", "세종특별자치시", "대전", "광주", "대구", "울산", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주특별자치도"};
     static Map<String, String[]> STAT_EQUI_MODEL_LIST = new HashMap();
     @PostConstruct
-    public void init() {
+    public void init() { //"15톤",
         String[] crainModel = {"5톤", "10톤", "13톤", "25톤", "50톤", "100톤", "160톤", "200톤", "250톤", "300톤", "400톤", "500톤", "700톤", "800톤", "1200톤"};
         String[] cagoModel = {"5톤", "11톤", "18톤", "25톤"};
         String[] porkrainModel = {"미니", "02W", "03W", "06W", "08W", "02LC", "04LC", "06LC"};

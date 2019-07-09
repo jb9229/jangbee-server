@@ -48,11 +48,14 @@ public class CouponService {
 
     @Transactional
     public boolean cashback(CashbackDto.Create create) {
-        Integer udpateResult = repository.cashback(create.getAccountId(), create.getCashback());
+        Integer udpateResult = repository.updateCouponCount(create.getAccountId(), create.getCashback());
 
         if(udpateResult != null &&  udpateResult > 0) {
-            OpenbankService.diposit(create.getAuthToken(), create.getFintechUseNum(), "장비콜캐쉬백", create.getCashback());
+            int cashback = create.getCashback() * 5000;
+            OpenbankService.diposit(create.getAuthToken(), create.getFintechUseNum(), "장비콜캐쉬백", cashback);
+            return true;
         }
-        return true;
+
+        return false;
     }
 }

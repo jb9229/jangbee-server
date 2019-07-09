@@ -96,6 +96,7 @@ public class AdDto {
         private String rsp_code;    // "A0000"
         private String rsp_message;    // "A0000"
 
+        private String api_tran_id;
         private String wd_account_holder_name;    // "홍길동"
         private String tran_amt;    // "A0000"
         private String bank_name;    // "A0000"
