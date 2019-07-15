@@ -33,6 +33,9 @@ public interface FirmRepository extends JpaRepository<Firm, Long> {
     @Query(value="SELECT f FROM Firm f WHERE f.workAlarmSigungu LIKE :workAlarmSigungu")
     List<Firm> findCEvaluAlarmSigunguFirm(@Param("workAlarmSigungu") String workAlarmSigungu);
 
+    @Query(value="SELECT f.accountId FROM Firm f")
+    List<String> findAllAccountId();
+
     List<Firm> findByAccountIdIn(List<String> appliAccountIdList);
 
     @Transactional
