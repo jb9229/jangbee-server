@@ -10,8 +10,38 @@ import javax.validation.constraints.NotNull;
  */
 public class PaymentDto {
     @Data
+    public static class ReadyResponse {
+        private String tid;
+        private String next_redirect_app_url;
+        private String next_redirect_mobile_url;
+        private String next_redirect_pc_url;
+        private String android_app_scheme;
+        private String ios_app_scheme;
+        private String created_at;
+    }
+
+    @Data
     public static class ApprovalResponse {
         private String sid;
+    }
+
+    @Data
+    public static class Ready {
+        @NotBlank
+        @NotNull
+        private String itemName;
+
+        @NotBlank
+        @NotNull
+        private String totalAmount;
+
+        @NotBlank
+        @NotNull
+        private String partnerOrderId;
+
+        @NotBlank
+        @NotNull
+        private String partnerUserId;
     }
 
     @Data

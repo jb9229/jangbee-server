@@ -17,6 +17,24 @@ public class PaymentController {
     @Autowired
     private PaymentService service;
 
+    @RequestMapping(value="payment/ready", method = RequestMethod.POST)
+    public ResponseEntity ready(@RequestBody @Valid PaymentDto.Ready ready, BindingResult result) {   //RequestBody
+
+        if(result.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        PaymentDto.ReadyResponse response = service.requestReady(ready);
+
+        if (response != null)
+        {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else
+        {
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+    }
+
     @CrossOrigin("*")
     @RequestMapping(value="payment/approval", method = RequestMethod.POST)
     public ResponseEntity create(@RequestBody @Valid PaymentDto.Approval approval, BindingResult result) {   //RequestBody
@@ -34,6 +52,5 @@ public class PaymentController {
         {
             return new ResponseEntity<>(false, HttpStatus.OK);
         }
-
     }
 }
