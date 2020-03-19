@@ -2,6 +2,7 @@ package com.jangbee.client_evalu;
 
 import com.jangbee.common.JBBadRequestException;
 import com.vividsolutions.jts.io.ParseException;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -70,6 +71,17 @@ public class ClientEvaluController {
         PageImpl<ClientEvaluDto.Response> pageResult    =   new PageImpl<>(responseList, pageable, page.getTotalElements());
 
         return new ResponseEntity<>(pageResult, HttpStatus.OK);
+    }
+
+    @RequestMapping(value="evaluation/count", method = RequestMethod.GET)
+    public ResponseEntity getMyEvaluCount(@RequestParam String accountId) {
+        long totalCnt = service.getMyClientEvaluCount();
+        long myCnt = service.getMyClientEvaluCount(accountId);
+
+        JSONObject obj = new JSONObject();
+        obj.put("totalCnt", totalCnt);
+        obj.put("myCnt", myCnt);
+        return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
     }
 
     @RequestMapping(value="evaluation", method = RequestMethod.GET)

@@ -13,6 +13,8 @@ import com.jangbee.expo.ExpoNotiData;
 import com.jangbee.expo.ExpoNotificationService;
 import com.jangbee.openbank.OpenbankDto;
 import com.jangbee.openbank.OpenbankService;
+import com.jangbee.payment.PaymentDto;
+import com.jangbee.payment.PaymentService;
 import com.jangbee.work.Work;
 import com.jangbee.work.WorkRepository;
 import com.jangbee.work.WorkState;
@@ -38,7 +40,7 @@ public class DailyScheduler {
     @Autowired
     AdService adservice;
     @Autowired
-    OpenbankService openBankService;
+    PaymentService paymentService;
     @Autowired
     private CouponService couponService;
 
@@ -77,31 +79,14 @@ public class DailyScheduler {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     AccountDto.FirebaseUser user = dataSnapshot.getValue(AccountDto.FirebaseUser.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
-                    // 1년 토큰 만료 확인
-                    Date discardDate = user.parseObAccTokenDiscDate();   // For Test Environment Null Check
-                    Date expireDate = user.parseObAccTokenExpDate(); // For Test Environment Null Check
-                    if(discardDate != null && afterTwentyDay.after(discardDate)){
-                        if(atDisMsgSendUserList.contains(user.getExpoPushToken())) { return; }
-                        expoNotificationService.sendSingle(user.getExpoPushToken(), "광고비 이체통장 재인증 요청", "보안상 1년마다 이체통장 재인증을 받아야 합니다", ExpoNotiData.NOTI_OBAT_DISCARD);
-                        atDisMsgSendUserList.add(user.getExpoPushToken());
-                    }
-
-                    // 3개월 토큰 갱신 확인
-                    if(expireDate != null && now.after(expireDate)){
-                        try {
-                            boolean result = adservice.refreshObtoken(user.getObAccessToken(), user.getObRefreshToken(), ad);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
                     // 광고비 이체
                     Calendar afterTenDayCal = Calendar.getInstance();
                     afterTenDayCal.add(Calendar.DAY_OF_MONTH, 10);
                     if(ad.getNextWithdrawDate().before(ad.getEndDate()) && now.after(ad.getNextWithdrawDate())){
-                        boolean result = openBankService.withdraw(user.getObAccessToken(), ad.getFintechUseNum(), "장비 콜 광고비", ad.getPrice());
+                        boolean response = paymentService.requestSubscription("장비 콜 광고비", user.getSid(), ad.getPrice());
 
-                        if(!result){
+                        if(!response){
                             Calendar afterSevenCal = Calendar.getInstance();
                             afterSevenCal.setTime(ad.getNextWithdrawDate());
                             afterSevenCal.add(Calendar.DAY_OF_MONTH, +7);
@@ -187,51 +172,6 @@ public class DailyScheduler {
         List<Work> overWork = workRepository.getOverOneMonthWorkList(beforeOneMonth.getTime(), WorkState.CLOSED);
         workRepository.delete(overWork);
 
-
-        // Open bank 이용기관 Access Token 재발급 체크
-        FirebaseDatabase.getInstance().getReference("openbank/oob").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                OpenbankDto.OobAccTokenInfo tokenInfo = dataSnapshot.getValue(OpenbankDto.OobAccTokenInfo.class); // for(DataSnapshot ds : dataSnapshot.getChildren()) {} .child("Address")
-
-                // Validation
-                if (tokenInfo != null && tokenInfo.getExp_date() != null) {
-                    SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    Date expDate = null;
-                    try {
-                        expDate = sdFormat.parse(tokenInfo.getExp_date());
-                    } catch (ParseException e) { e.printStackTrace();}
-
-                    if (expDate.after(new Date())) {return;}
-                }
-
-                OpenbankDto.OobAccTokenResponse tokenResponse = openBankService.requestOobToken();
-
-                if(tokenInfo != null) {
-                    Map<String, Object> update = new HashMap<String, Object>();
-                    update.put("/openbank/oob/access_token", tokenInfo.getAccess_token());
-                    update.put("/openbank/oob/token_type", tokenInfo.getToken_type());
-                    update.put("/openbank/oob/scope", tokenInfo.getScope());
-                    update.put("/openbank/oob/client_use_code", tokenInfo.getScope());
-
-                    LocalDateTime now = LocalDateTime.now();
-                    LocalDateTime expDate = now.plusDays(80);
-                    update.put("/openbank/oob/exp_date", expDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
-                    FirebaseDatabase.getInstance().getReference().updateChildren(update, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            // TODO Event Driven Return
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                sendFailEmail("pen bank 이용기관 Access Token 재발급 오류", "");
-            }
-        });
     }
 
     private void sendWithdrawFailEmail(Ad ad) {
@@ -248,17 +188,4 @@ public class DailyScheduler {
         }
     }
 
-    private void sendFailEmail(String subject, String contents) {
-        Email email = new Email();
-        email.setSender(adminEmail);
-        email.setReceiver(adminEmail);
-        email.setSubject(subject);
-        String eamilContents = contents;
-        email.setContent(eamilContents);
-        try {
-            emailSender.sendMail(email);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
-    }
 }

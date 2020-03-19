@@ -24,6 +24,8 @@ public class PaymentService {
     private String kakaoPGReadyUrl;
     @Value( "${kakao.payment.approval-url}" )
     private String kakaoPGApprovalUrl;
+    @Value( "${kakao.payment.subscription-url}" )
+    private String kakaoPGSubscriptionUrl;
     @Value( "${kakao.payment.callback-approval}" )
     private String kakaoPGCallbackApproval;
     @Value( "${kakao.payment.callback-fail}" )
@@ -88,5 +90,34 @@ public class PaymentService {
         }
 
         return null;
+    }
+
+    public boolean requestSubscription(String itemName, String sid, int price) {
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
+        try {
+            requestBody.add("cid", "TCSUBSCRIP");
+            requestBody.add("sid", sid);
+            requestBody.add("item_name", itemName);
+
+            requestBody.add("partner_order_id", data.getPartnerOrderId());
+            requestBody.add("partner_user_id", data.getPartnerUserId());
+            requestBody.add("quantity", "1");
+            requestBody.add("total_amount", "" + price);
+            requestBody.add("tax_free_amount", "0");
+            ResponseEntity<PaymentDto.SubscriptionResponse> subscriptionResult = restTemplateUtils.postForObject(kakaoPGSubscriptionUrl, requestBody, kakaoPGAK, PaymentDto.SubscriptionResponse.class, new MediaType(MediaType.APPLICATION_FORM_URLENCODED, Charset.forName("UTF-8")));
+
+            if (subscriptionResult.getStatusCodeValue() == 200) {
+                PaymentDto.SubscriptionResponse tokenResult = subscriptionResult.getBody();
+
+                if (tokenResult != null && tokenResult.getTid() != null && !tokenResult.getTid().isEmpty()) {
+                    return true;
+                }
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+
+        return false;
     }
 }

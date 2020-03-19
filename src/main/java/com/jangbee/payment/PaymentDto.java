@@ -26,6 +26,12 @@ public class PaymentDto {
     }
 
     @Data
+    public static class SubscriptionResponse {
+        private String tid;
+        private String created_at;
+    }
+
+    @Data
     public static class Ready {
         @NotBlank
         @NotNull

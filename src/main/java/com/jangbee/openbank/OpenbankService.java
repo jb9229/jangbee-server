@@ -66,35 +66,6 @@ public class OpenbankService {
         return null;
     }
 
-    public boolean withdraw(String authToken, String fintechUseNum, String printContent, int tranAmt) {
-        JSONObject userJSON = new JSONObject();
-        try {
-            userJSON.put("dps_print_content", printContent);
-            userJSON.put("fintech_use_num", fintechUseNum);
-            userJSON.put("tran_amt", tranAmt);
-            LocalDateTime ldt = LocalDateTime.now();
-            DateTimeFormatter formmat1 = DateTimeFormatter.ofPattern("yyyyMMddHHmmss", Locale.KOREA);
-            userJSON.put("tran_dtime", formmat1.format(ldt));
-            ResponseEntity<AdDto.TransferWithdrawResponse> withdrawResult = restTemplateUtils.postForObject(adWithdrawUrl, userJSON.toString(), authToken, AdDto.TransferWithdrawResponse.class, MediaType.APPLICATION_JSON);
-
-            if (withdrawResult.getStatusCodeValue() == 200) {
-                AdDto.TransferWithdrawResponse tranResult = withdrawResult.getBody();
-
-                if (tranResult.getRsp_code().equals("A0000")) {
-                    AdWithdrawHistory withHistory = modelMapper.map(tranResult, AdWithdrawHistory.class);
-                    withHistRepository.save(withHistory);
-
-                    return true;
-                }
-            }
-        }catch (Exception ex){
-            ex.printStackTrace();
-            return false;
-        }
-
-        return false;
-    }
-
     public boolean diposit(String authToken, String fintechUseNum, String printContent, int tranAmt) {
         JSONObject userJSON = new JSONObject();
 

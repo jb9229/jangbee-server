@@ -34,4 +34,7 @@ public interface ClientEvaluRepository extends JpaRepository<ClientEvalu, Long> 
     @Modifying
     @Transactional
     Long deleteByAccountId(String accountId);
+
+    long countByAccountId(String accountId);
+
 }

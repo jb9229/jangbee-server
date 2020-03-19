@@ -105,6 +105,14 @@ public class ClientEvaluService {
         return null;
     }
 
+    public long getMyClientEvaluCount() {
+        return repository.count();
+    }
+
+    public long getMyClientEvaluCount(String accountId) {
+        return repository.countByAccountId(accountId);
+    }
+
     public Page<ClientEvalu> getMyClientEvalu(String accountId, Pageable pageable) {
         return repository.getMy(accountId, pageable);
     }
