@@ -32,12 +32,14 @@ public class PaymentService {
     private String kakaoPGCallbackFail;
     @Value( "${kakao.payment.callback-cancel}" )
     private String kakaoPGCallbackCancel;
+    @Value( "${kakao.payment.cid}" )
+    private String kakaoPGCid;
 
 
     public PaymentDto.ReadyResponse requestReady(PaymentDto.Ready data) {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
         try {
-            requestBody.add("cid", "TCSUBSCRIP");
+            requestBody.add("cid", kakaoPGCid);
             requestBody.add("partner_order_id", data.getPartnerOrderId());
             requestBody.add("partner_user_id", data.getPartnerUserId());
 
@@ -69,7 +71,7 @@ public class PaymentService {
     public PaymentDto.ApprovalResponse requestApproval(PaymentDto.Approval data) {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
         try {
-            requestBody.add("cid", "TCSUBSCRIP");
+            requestBody.add("cid", kakaoPGCid);
 //            requestBody.add("cid_secret", obClinetPw);
             requestBody.add("pg_token", data.getPgToken());
             requestBody.add("tid", data.getTid());
@@ -95,12 +97,12 @@ public class PaymentService {
     public boolean requestSubscription(String itemName, String sid, int price) {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
         try {
-            requestBody.add("cid", "TCSUBSCRIP");
+            requestBody.add("cid", kakaoPGCid);
             requestBody.add("sid", sid);
             requestBody.add("item_name", itemName);
 
-            requestBody.add("partner_order_id", data.getPartnerOrderId());
-            requestBody.add("partner_user_id", data.getPartnerUserId());
+//            requestBody.add("partner_order_id", data.getPartnerOrderId());
+//            requestBody.add("partner_user_id", data.getPartnerUserId());
             requestBody.add("quantity", "1");
             requestBody.add("total_amount", "" + price);
             requestBody.add("tax_free_amount", "0");

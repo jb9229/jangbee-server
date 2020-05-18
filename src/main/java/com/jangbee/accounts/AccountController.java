@@ -34,8 +34,8 @@ public class AccountController {
             Email email = new Email();
             email.setSender(adminEmail);
             email.setReceiver(adminEmail);
-            email.setSubject("È¸¿øÁ¤º¸ »èÁ¦ ½ÇÆĞ");
-            email.setContent("»èÁ¦½ÇÆĞ È¸¿øÁ¤º¸: "+accountId);
+            email.setSubject("íšŒì›ì •ë³´ ì‚­ì œ ì‹¤íŒ¨");
+            email.setContent("ì‚­ì œì‹¤íŒ¨ íšŒì›ì •ë³´: "+accountId);
             emailSender.sendMail(email);
         }
 

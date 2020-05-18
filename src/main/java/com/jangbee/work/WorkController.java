@@ -146,8 +146,8 @@ public class WorkController {
         if (apply.isCoupon()) {
             couponService.useCoupon(apply.getAccountId(), 2);
         } else {
-            boolean withdrawResult = openBankService.withdraw(apply.getAuthToken(), apply.getFintechUseNum(), "장비콜 일감매칭비", firmWorkMatchingFee);
-            if (!withdrawResult) {
+//            boolean withdrawResult = openBankService.withdraw(apply.getAuthToken(), apply.getFintechUseNum(), "장비콜 일감매칭비", firmWorkMatchingFee);
+            if (!true) {
                 service.cancelApplyFirmWork(newWorkApplicant);
                 throw new FirmworkWithdrawException();
             }
