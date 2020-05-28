@@ -10,6 +10,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.nio.charset.Charset;
+import java.util.Date;
 
 /**
  * Created by kosac on 08/03/2020.
@@ -94,15 +95,15 @@ public class PaymentService {
         return null;
     }
 
-    public boolean requestSubscription(String itemName, String sid, int price) {
+    public boolean requestSubscription(String itemName, String accountId,  String sid, int price) {
         MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<String, String>();
         try {
             requestBody.add("cid", kakaoPGCid);
             requestBody.add("sid", sid);
             requestBody.add("item_name", itemName);
 
-//            requestBody.add("partner_order_id", data.getPartnerOrderId());
-//            requestBody.add("partner_user_id", data.getPartnerUserId());
+            requestBody.add("partner_order_id", "'ORDER_"+ accountId + new Date().getTime());
+            requestBody.add("partner_user_id", accountId);
             requestBody.add("quantity", "1");
             requestBody.add("total_amount", "" + price);
             requestBody.add("tax_free_amount", "0");

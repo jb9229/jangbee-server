@@ -84,7 +84,7 @@ public class DailyScheduler {
                     Calendar afterTenDayCal = Calendar.getInstance();
                     afterTenDayCal.add(Calendar.DAY_OF_MONTH, 10);
                     if(ad.getNextWithdrawDate().before(ad.getEndDate()) && now.after(ad.getNextWithdrawDate())){
-                        boolean response = paymentService.requestSubscription("장비 콜 광고비", user.getSid(), ad.getPrice());
+                        boolean response = paymentService.requestSubscription("장비 콜 광고비", ad.getAccountId(), user.getSid(), ad.getPrice());
 
                         if(!response){
                             Calendar afterSevenCal = Calendar.getInstance();
