@@ -6,7 +6,7 @@
 
     <groupId>com.jb</groupId>
     <artifactId>jangbee</artifactId>
-    <version>0.8.10-20200529</version>
+    <version>0.8.11-20200606</version>
     <packaging>jar</packaging>
 
     <properties>

@@ -10,6 +10,7 @@ import com.jangbee.firm.FirmDto;
 import com.jangbee.firm.FirmService;
 import com.jangbee.firm_evalu.FirmEvaluService;
 import com.jangbee.openbank.OpenbankService;
+import com.jangbee.payment.PaymentService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,12 +46,15 @@ public class WorkController {
     CouponService couponService;
 
     @Autowired
+    PaymentService paymentService;
+
+    @Autowired
     WorkRepository workRepository;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    @Value( "${openbank.matching_fee.firm_work}" )
+    @Value( "${kakao.payment.firmwork.matching.fee}" )
     private Integer firmWorkMatchingFee;
 
     @RequestMapping(value="work", method = RequestMethod.POST)
@@ -120,20 +124,12 @@ public class WorkController {
     }
 
     @RequestMapping(value="firm_works/firm/apply", method = RequestMethod.PUT)
-    public ResponseEntity applyFirmWork(@RequestBody @Valid WorkDto.Apply apply, BindingResult result) {
+    public ResponseEntity applyFirmPaymentWork(@RequestBody @Valid WorkDto.Apply paymentApply, BindingResult result) {
         if(result.hasErrors()){
             throw new JBBadRequestException();
         }
 
-        if (apply.isCoupon()){
-            Coupon c = couponService.getCoupon(apply.getAccountId());
-
-            if(c == null || c.getCpCount() < 2) {
-                throw new CouponLackException();
-            }
-        }
-
-        Work work = workRepository.findOne(apply.getWorkId());
+        Work work = workRepository.findOne(paymentApply.getWorkId());
         if (work == null) {throw new JBUnexpectException();}
         Date guaranteeTime = work.getGuaranteeTime();
 
@@ -141,16 +137,14 @@ public class WorkController {
             throw new FirmWorkExpireException();
         }
 
-        WorkApplicant newWorkApplicant = service.applyFirmWork(apply);
+        WorkApplicant newWorkApplicant = service.applyFirmWork(paymentApply);
 
-        if (apply.isCoupon()) {
-            couponService.useCoupon(apply.getAccountId(), 2);
-        } else {
-//            boolean withdrawResult = openBankService.withdraw(apply.getAuthToken(), apply.getFintechUseNum(), "장비콜 일감매칭비", firmWorkMatchingFee);
-            if (!true) {
-                service.cancelApplyFirmWork(newWorkApplicant);
-                throw new FirmworkWithdrawException();
-            }
+        boolean response = paymentService.requestSubscription("장비콜 매칭비", paymentApply.getAccountId(), paymentApply.getSid(), firmWorkMatchingFee);
+
+        if (!response)
+        {
+            service.cancelApplyFirmWork(newWorkApplicant);
+            throw new FirmworkWithdrawException();
         }
 
         service.acceptFirmWork(work, newWorkApplicant);

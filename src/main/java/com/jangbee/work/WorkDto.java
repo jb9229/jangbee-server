@@ -182,8 +182,7 @@ public class WorkDto {
         private long workId;
         @NotBlank
         private String accountId;
-        private String authToken;
-        private String fintechUseNum;
+        private String sid;
         private boolean coupon;
     }
 
